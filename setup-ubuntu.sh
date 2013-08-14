@@ -193,17 +193,16 @@ function install_ufw {
 
 }
 
-function install_mysql {
+function install_mariadb {
 
-	# Install the MySQL packages
-	check_install mysqld mysql-server
-	check_install mysql mysql-client
+	# Install the MariaDB packages
+	check_install mariadb-server mariadb-server
 
 	invoke-rc.d mysql start
-	read -p "MySQL root password: " passwd
+	read -p "MariaDB root password: " passwd
 	mysqladmin password "$passwd"
 
-	print_warn "Respond YES to all questions asked to secure your MySQL install"
+	print_warn "Respond YES to all questions asked to secure your MariaDB install"
 	mysql_secure_installation
 }
 
@@ -213,7 +212,7 @@ function install_php {
 	check_install php5-cli php5-cli
 
 	# PHP modules
-	DEBIAN_FRONTEND=noninteractive apt-get -y install php5-apc php5-suhosin php5-curl php5-gd php5-intl php5-mcrypt php-gettext php5-mysql php5-sqlite
+	DEBIAN_FRONTEND=noninteractive apt-get -y install php5-apc php5-suhosin php5-curl php5-gd php5-intl php5-mcrypt php-gettext php5-mariadb php5-sqlite
 
 	echo 'Using PHP-FPM to manage PHP processes'
 	echo ' '
@@ -763,8 +762,8 @@ export PATH=/bin:/usr/bin:/sbin:/usr/sbin
 
 check_sanity
 case "$1" in
-mysql)
-	install_mysql
+mariadb)
+	install_mariadb
 	;;
 nginx)
 	install_nginx
@@ -824,7 +823,7 @@ system)
 	echo 'Available options (in recomended order):'
 	echo '  - system                 (remove unneeded, upgrade system, install software)'
 	echo '  - ufw [port]             (setup basic firewall with HTTP(S) open)'
-	echo '  - mysql                  (install MySQL and set root password)'
+	echo '  - MariaDB                (install MySQL alternative and set root password)'
 	echo '  - nginx                  (install nginx and create sample PHP vhosts)'
 	echo '  - php                    (install PHP5-FPM with APC, cURL, suhosin, etc...)'
 	echo '  - site [domain.tld] 	 (create nginx vhost and /var/www/$site/public)'

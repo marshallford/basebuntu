@@ -11,7 +11,7 @@ Remove excess packages (apache2, sendmail, bind9, samba, nscd, etc) and install 
  - ufw (firewall)
  - dash (replaces bash)
  - syslogd
- - MySQL (v5.5+)
+ - MariaDB (v5.5+)
  - PHP-FPM (v5.3+ with APC installed and configured)
  - nginx (v1.2+ from dotdeb, configured for lowend VPS. Change worker_processes in nginx.conf according to number of CPUs)
  - git, vim, nano, mc, htop, iftop & iotop
@@ -34,7 +34,7 @@ When running the UFW command you must specify a SSH port. Remember, port 22 is t
 	
 	./setup-ubuntu.sh system
 	./setup-ubuntu.sh ufw [port]
-	./setup-ubuntu.sh mysql
+	./setup-ubuntu.sh mariadb
 	./setup-ubuntu.sh nginx
 	./setup-ubuntu.sh php
 	./setup-ubuntu.sh site [domain.tld]
