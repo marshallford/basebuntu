@@ -611,6 +611,17 @@ function harden_ssh {
 }
 
 ############################################################
+# Fail2ban install and config file move
+############################################################
+function f2b {
+	check_install fail2ban fail2ban
+	cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+	service fail2ban restart
+	print_warn "Fail2ban's config file is located in /etc/fail2ban/jail.local"
+
+}
+
+############################################################
 # Download ps_mem.py
 ############################################################
 function install_ps_mem {
@@ -798,6 +809,9 @@ test)
 harden_ssh)
 	harden_ssh
 	;;
+fail2ban)
+	f2b
+	;;
 info)
 	show_os_arch_version
 	;;
@@ -831,6 +845,7 @@ system)
 	echo '  '
 	echo '... and now some extras'
 	echo '  - harden_ssh [option #]  (Hardens openSSH with PermitRoot and PasswordAuthentication)'
+	echo '  - fail2ban               (Installs fail2ban and creates a config file)'
 	echo '  - info                   (Displays information about the OS, ARCH and VERSION)'
 	echo '  - apt                    (update sources.list for UBUNTU only)'
 	echo '  - ps_mem                 (Download the handy python script to report memory usage)'

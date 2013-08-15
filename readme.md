@@ -4,7 +4,7 @@ Written for a 512MB/1GB Ubuntu VPS. I realize this isn't exactly "low end", but 
 
 [TO-DO](todo.md)
 
--- 
+--
 
 Remove excess packages (apache2, sendmail, bind9, samba, nscd, etc) and install the basic components needed for a light-weight HTTP(S) web server:
 
@@ -13,18 +13,10 @@ Remove excess packages (apache2, sendmail, bind9, samba, nscd, etc) and install 
  - syslogd
  - MariaDB (v5.5+)
  - PHP-FPM (v5.3+ with APC installed and configured)
- - nginx (v1.2+ from dotdeb, configured for lowend VPS. Change worker_processes in nginx.conf according to number of CPUs)
- - git, vim, nano, mc, htop, iftop & iotop
+ - nginx (configured for lowend VPS. Change worker_processes in nginx.conf according to number of CPUs)
+ - git, vim, nano, mc, htop, iftop & iotop	
 
-Includes sample nginx config files for PHP sites. You can create a basic site shell (complete with nginx vhost) like this:
-
-	./setup-ubuntu.sh site example.com
-
-Also includes a basic WordPress setup function, just remember to setup and connect a database afterwords.
-
-	./setup-ubuntu.sh wordpress example.com	
-
-When running the UFW command you must specify a SSH port. Remember, port 22 is the default. It's recommended that you change this from 22 just to save server load from attacks on that port.
+**Note:** When running the UFW command you must specify a SSH port. Remember, port 22 is the default. It's recommended that you change this from 22 just to save server load from attacks on that port.
 
 ## Usage (in recommended order)
 
@@ -37,10 +29,18 @@ When running the UFW command you must specify a SSH port. Remember, port 22 is t
 	./setup-ubuntu.sh mariadb
 	./setup-ubuntu.sh nginx
 	./setup-ubuntu.sh php
-	./setup-ubuntu.sh site [domain.tld]
-	./setup-ubuntu.sh wordpress [domain.tld]
 
-#### ... and now time for some extras
+### After the minimal usage, create websites with the following commands...
+
+The lowendubuntu scipt includes a sample nginx config files for PHP sites. You can create a basic site shell (complete with nginx vhost) like this:
+
+	./setup-ubuntu.sh site example-domain.tld
+
+The script also includes a basic WordPress setup function, just remember to setup and connect a database afterwords.
+
+	./setup-ubuntu.sh wordpress example-domain.tld	
+
+## Extra Commands
 
 ##### Harden openSSH
 
@@ -62,13 +62,19 @@ Supported only on OpenVZ only, vzfree reports correct memory usage
 
 	./setup-ubuntu.sh vzfree
 
+##### Fail2ban (bruteforce/Dos firewall)
+
+Installs a firewall to protect against bruteforce attacks on ssh and http(s) ports.
+	
+	./setup-ubuntu.sh fail2ban
+
 ##### Classic Disk I/O and Network test
 
 Run the classic Disk IO (dd) & Classic Network (cachefly) Test
 
 	./setup-ubuntu.sh test
 
-##### Neat python script to report memory usage per app
+##### Memory Usage Script
 
 Neat python script to report memory usage per app
 
@@ -83,14 +89,12 @@ Updates Ubuntu /etc/apt/sources.list to default based on whatever version you ar
 ##### Info on Operating System, version and Architecture
 
 	./setup-ubuntu.sh info
-    
-##### Extras
 
-Fixing locale on some OpenVZ Ubuntu templates
+#### Fixing locale on some OpenVZ Ubuntu templates
 
 	./setup-ubuntu.sh locale
 
-Configure or reconfigure MOTD
+#### Configure or reconfigure MOTD
 
 	./setup-ubuntu.sh motd
 
