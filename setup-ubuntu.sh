@@ -195,6 +195,12 @@ function install_ufw {
 
 function install_mariadb {
 
+	# Install dependencies and repository
+	check_install python-software-properties python-software-properties
+	apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
+	add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/10.0/ubuntu precise main'
+	apt-get update
+
 	# Install the MariaDB packages
 	check_install mariadb-server mariadb-server
 

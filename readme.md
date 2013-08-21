@@ -11,7 +11,7 @@ Remove excess packages (apache2, sendmail, bind9, samba, nscd, etc) and install 
  - ufw (firewall)
  - dash (replaces bash)
  - syslogd
- - MariaDB (v5.5+)
+ - MariaDB (v10, based on MySQL 5.6)
  - PHP-FPM (v5.3+ with APC installed and configured)
  - nginx (configured for lowend VPS. Change worker_processes in nginx.conf according to number of CPUs)
  - git, vim, nano, mc, htop, iftop & iotop	
@@ -38,7 +38,7 @@ The lowendubuntu scipt includes a sample nginx config files for PHP sites. You c
 
 The script also includes a basic WordPress setup function, just remember to setup and connect a database afterwords.
 
-	./setup-ubuntu.sh wordpress example-domain.tld	
+	./setup-ubuntu.sh wordpress example-domain.tld
 
 ## Extra Commands
 
