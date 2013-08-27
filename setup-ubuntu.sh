@@ -813,7 +813,7 @@ test)
 	runtests
 	;;
 harden_ssh)
-	harden_ssh
+	harden_ssh $2
 	;;
 fail2ban)
 	f2b
