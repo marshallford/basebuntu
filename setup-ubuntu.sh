@@ -114,6 +114,10 @@ function install_iotop {
 	check_install iotop iotop
 }
 
+function install_screen {
+	check_install screen screen
+}
+
 function install_iftop {
 	check_install iftop iftop
 	print_warn "Run IFCONFIG to find your net. device name"
@@ -494,7 +498,7 @@ server {
     {
 	    rewrite ^(.+)$ /index.php?q=$1 last;
     }
- 
+
     # catch all
     error_page 404 /index.php;
 
@@ -522,7 +526,7 @@ server {
     }
 
     location / {
-                # This is cool because no php is touched for static content. 
+                # This is cool because no php is touched for static content.
                 # include the "?\$args" part so non-default permalinks doesn't break when using query string
                 try_files \$uri \$uri/ /index.php?\$args;
         }
@@ -610,8 +614,8 @@ function harden_ssh {
 	elif [ "$1" == 4 ]
 	then
 		sed -i 's/PermitRootLogin yes/PermitRootLogin without-password/' /etc/ssh/sshd_config
-	else 
-		die "Usage: `basename $0` harden_ssh [option #]"	
+	else
+		die "Usage: `basename $0` harden_ssh [option #]"
 	fi
 	print_info "SSH hardening sucessful"
 }
@@ -772,7 +776,7 @@ function update_timezone {
 	dpkg-reconfigure tzdata
 }
 
-######################################################################## 
+########################################################################
 # START OF PROGRAM
 ########################################################################
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin
@@ -796,7 +800,7 @@ wordpress)
 	;;
 ufw)
 	install_ufw $2
-	;;	
+	;;
 ps_mem)
 	install_ps_mem
 	;;
@@ -830,7 +834,7 @@ system)
 	install_vim
 	install_nano
 	install_htop
-	install_mc
+	install_screen
 	install_iotop
 	install_iftop
 	install_syslogd
