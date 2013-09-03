@@ -4,3 +4,4 @@
 2. Add sample dev setups.
 3. Add the option to set the memory limit for PHP and to set the APC cache size.
 4. Add Openvpn as an extra.
+5. Add a git repo with a deployment script when adding a website or wordpress install.
