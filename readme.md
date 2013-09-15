@@ -14,7 +14,7 @@ Remove excess packages (apache2, sendmail, bind9, samba, nscd, etc) and install 
  - MariaDB (v10, based on MySQL 5.6)
  - PHP-FPM (v5.3+ with APC installed and configured)
  - nginx (configured for lowend VPS. Change worker_processes in nginx.conf according to number of CPUs)
- - git, vim, nano, mc, htop, iftop & iotop	
+ - git, vim, nano, mc, htop, iftop & iotop
 
 **Note:** When running the UFW command you must specify a SSH port. Remember, port 22 is the default. It's recommended that you change this from 22 just to save server load from attacks on that port.
 
@@ -23,7 +23,7 @@ Remove excess packages (apache2, sendmail, bind9, samba, nscd, etc) and install 
 ### Warning! This script will overwrite previous configs during reinstallation.
 
 	cd ~; wget --no-check-certificate https://raw.github.com/marshallford/lowendubuntu/master/setup-ubuntu.sh; chmod +x setup-ubuntu.sh
-	
+
 	./setup-ubuntu.sh system
 	./setup-ubuntu.sh ufw [port]
 	./setup-ubuntu.sh mariadb
@@ -56,6 +56,12 @@ Hardens openSSH with PermitRoot and PasswordAuthentication
 
 4 = Normal users can login with SSH-keys or plain passwords, root can only login via SSH-keys.
 
+##### Git based deployment system
+
+Uses git hooks and checkout, supports WordPress installs. ([Script Source](https://github.com/marshallford/gitdeploy))
+
+	./setup-ubuntu.sh gitdeploy [domain.tld]
+
 ##### vzfree
 
 Supported only on OpenVZ only, vzfree reports correct memory usage
@@ -65,7 +71,7 @@ Supported only on OpenVZ only, vzfree reports correct memory usage
 ##### Fail2ban (bruteforce/Dos firewall)
 
 Installs a firewall to protect against bruteforce attacks on ssh and http(s) ports.
-	
+
 	./setup-ubuntu.sh fail2ban
 
 ##### Classic Disk I/O and Network test

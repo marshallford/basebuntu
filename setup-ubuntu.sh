@@ -403,7 +403,7 @@ function install_site {
 
 	if [ -z "$1" ]
 	then
-		die "Usage: `basename $0` site [domain]"
+		die "Usage: `basename $0` site [domain.tld]"
 	fi
 
 	# Setup folder
@@ -467,7 +467,7 @@ function install_wordpress {
 
 	if [ -z "$1" ]
 	then
-		die "Usage: `basename $0` wordpress [domain]"
+		die "Usage: `basename $0` wordpress [domain.tld]"
 	fi
 
 	# Setup folder
@@ -590,6 +590,53 @@ function remove_unneeded {
 		invoke-rc.d sendmail stop
 		check_remove /usr/lib/sm.bin/smtpd 'sendmail*'
 	fi
+}
+############################################################
+# Git deployment system
+############################################################
+function git_deploy {
+	if [ -z "$1" ]
+	then
+		die "Usage: `basename $0` gitdeploy [domain.tld]"
+	fi
+	cd /var/www
+	if [ ! -d "$1" ] then
+		die "The website $1 doesn't exist or hasn't been created yet"
+	fi
+	print_info "1) Use current user ($USER) to push repo"
+	print_info "2) Use the user \"git\" to push the repo"
+	read -p "Enter 1 or 2: " gituser
+	if [$gituser == 1] then
+		gituser = $USER
+	elif [$gituser == 2] then
+		gituser = git
+	else
+		die "Not a valid choice, re-run and try again."
+	fi		
+	local wordpress, theme, themefolder
+	local serverip=$(get_ip)
+	local sshport=${SSH_CLIENT##* }
+	install_git
+	cd $1
+	git --bare init repo
+	cd /var/www/$1/repo/hooks
+	git clone https://github.com/marshallford/gitdeploy.git .
+	chmod +x post-receive
+	sed -i 's/yourdomain.com/$1/g' post-receive
+
+	read -p "Is $1 a WordPress install? (y/n): " wordpress
+	if [$wordpress == "y"] then
+		read -p "Will you just be pushing your theme folder? (y/n): " theme
+	fi
+	if [$theme == "y"] then
+		read -p "Enter your desired theme folder name: " themefolder
+		cd /var/www/$1/public/wp-content/themes
+		mkdir $themefolder
+		chmod 644 $themefolder
+		cd /var/www/$1/repo/hooks
+		sed -i 's|ln -f -s $website/deployment/$current $website/public|ln -f -s $website/deployment/$current $website/public/wp-content/themes/'$themefolder'|' post-receive
+	fi
+	print_info "Add this remote git repo to push to: ssh://$gituser@$serverip:$sshport/var/www/$1/repo"
 }
 
 ############################################################
@@ -744,6 +791,18 @@ function show_os_arch_version {
 }
 
 ############################################################
+# Try to get our IP from the system and fallback to the Internet. (No IPv6)
+############################################################
+# script compatible with NATed servers.
+function get_ip {
+IP=$(ifconfig | grep 'inet addr:' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d: -f2 | awk '{ print $1}')
+if [ "$IP" = "" ]; then
+        IP=$(wget -qO- ipv4.icanhazip.com)
+fi
+echo "$ip"
+}
+
+############################################################
 # Fix locale for OpenVZ Ubuntu templates
 ############################################################
 function fix_locale {
@@ -816,6 +875,9 @@ locale)
 test)
 	runtests
 	;;
+gitdeploy)
+	git_deploy $2
+	;;	
 harden_ssh)
 	harden_ssh $2
 	;;
@@ -856,8 +918,9 @@ system)
 	echo '... and now some extras'
 	echo '  - harden_ssh [option #]  (Hardens openSSH with PermitRoot and PasswordAuthentication)'
 	echo '  - fail2ban               (Installs fail2ban and creates a config file)'
+	echo '  - gitdeploy [domain.tld] (Installs and configures a deployment system using git)'
 	echo '  - info                   (Displays information about the OS, ARCH and VERSION)'
-	echo '  - apt                    (update sources.list for UBUNTU only)'
+	echo '  - apt                    (update sources.list)'
 	echo '  - ps_mem                 (Download the handy python script to report memory usage)'
 	echo '  - vzfree                 (Install vzfree for correct memory reporting on OpenVZ VPS)'
 	echo '  - motd                   (Configures and enables the default MOTD)'
