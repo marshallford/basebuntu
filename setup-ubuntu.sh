@@ -605,9 +605,9 @@ function git_deploy {
 	print_info "2) Use the user \"git\" to push the repo"
 	read -p "Enter 1 or 2: " gituser_question
 	if [ $gituser_question == "1" ]; then
-		gituser = $USER
+		export gituser = $USER
 	elif [ $gituser_question == "2" ]; then
-		gituser= "git"
+		export gituser= "git"
 	else
 		die "Not a valid choice, re-run and try again."
 	fi
@@ -634,6 +634,7 @@ function git_deploy {
 		sed -i 's|ln -f -s $website/deployment/$current $website/public|ln -f -s $website/deployment/$current $website/public/wp-content/themes/'$themefolder'|' post-receive
 	fi
 	print_info "Add this remote git repo to push to: ssh://${gituser}@${serverip}:${sshport}/var/www/${1}/repo"
+	unset gituser
 }
 
 ############################################################
