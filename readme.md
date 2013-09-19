@@ -22,7 +22,7 @@ Remove excess packages (apache2, sendmail, bind9, samba, nscd, etc) and install 
 
 ### Warning! This script will overwrite previous configs during reinstallation.
 
-	cd ~; wget --no-check-certificate https://raw.github.com/marshallford/lowendubuntu/master/setup-ubuntu.sh; chmod +x setup-ubuntu.sh
+	cd ~; wget --no-check-certificate http://git.io/cb24Zw; chmod +x setup-ubuntu.sh
 
 	./setup-ubuntu.sh system
 	./setup-ubuntu.sh ufw [port]
