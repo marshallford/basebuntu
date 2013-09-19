@@ -605,9 +605,9 @@ function git_deploy {
 	print_info "2) Use the user \"git\" to push the repo"
 	read -p "Enter 1 or 2: " gituser_question
 	if [ $gituser_question == "1" ]; then
-		export gituser = $USER
+		export gituser="$USER"
 	elif [ $gituser_question == "2" ]; then
-		export gituser= "git"
+		export gituser="git"
 	else
 		die "Not a valid choice, re-run and try again."
 	fi
