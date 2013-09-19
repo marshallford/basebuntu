@@ -420,7 +420,7 @@ server {
 	listen [::]:80;
 	server_name www.$1 $1;
 	root /var/www/$1/public;
-	index index.html index.htm index.php;
+	try_files $uri.html $uri.htm $uri.php $uri/ =404;
 	client_max_body_size 32m;
 
 	access_log  /var/www/$1/access.log;
@@ -600,15 +600,16 @@ function git_deploy {
 		die "Usage: `basename $0` gitdeploy [domain.tld]"
 	fi
 	cd /var/www
-	if [ ! -d "$1" ] then
+	if [ ! -d "$1" ] 
+	then
 		die "The website $1 doesn't exist or hasn't been created yet"
 	fi
 	print_info "1) Use current user ($USER) to push repo"
 	print_info "2) Use the user \"git\" to push the repo"
 	read -p "Enter 1 or 2: " gituser
-	if [$gituser == 1] then
+	if [$gituser == 1]; then
 		gituser = $USER
-	elif [$gituser == 2] then
+	elif [$gituser == 2]; then
 		gituser = git
 	else
 		die "Not a valid choice, re-run and try again."
@@ -625,10 +626,10 @@ function git_deploy {
 	sed -i 's/yourdomain.com/$1/g' post-receive
 
 	read -p "Is $1 a WordPress install? (y/n): " wordpress
-	if [$wordpress == "y"] then
+	if [$wordpress == "y"]; then
 		read -p "Will you just be pushing your theme folder? (y/n): " theme
 	fi
-	if [$theme == "y"] then
+	if [$theme == "y"]; then
 		read -p "Enter your desired theme folder name: " themefolder
 		cd /var/www/$1/public/wp-content/themes
 		mkdir $themefolder
