@@ -622,10 +622,10 @@ function git_deploy {
 	sed -i 's/yourdomain.com/$1/g' post-receive
 
 	read -p "Is $1 a WordPress install? (y/n): " wordpress
-	if [ $wordpress == "y" ]; then
+	if [ "$wordpress" == "y" ]; then
 		read -p "Will you just be pushing your theme folder? (y/n): " theme
 	fi
-	if [ $theme == "y" ]; then
+	if [ "$theme" == "y" ]; then
 		read -p "Enter your desired theme folder name: " themefolder
 		cd /var/www/$1/public/wp-content/themes
 		mkdir $themefolder
