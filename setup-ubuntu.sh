@@ -372,9 +372,6 @@ location ~ \.php$ {
 # The exploit also can be stopped by adding "cgi.fix_pathinfo = 0" in your php.ini file.
 END
 
-	# remove localhost-config
-	rm -f /etc/nginx/sites-available/default
-
 	echo 'Created /etc/nginx/php.conf for PHP sites'
 	echo 'Created /etc/nginx/sites-available/default_php sample vhost'
 	echo ' '
@@ -606,11 +603,11 @@ function git_deploy {
 	fi
 	print_info "1) Use current user ($USER) to push repo"
 	print_info "2) Use the user \"git\" to push the repo"
-	read -p "Enter 1 or 2: " gituser
-	if [$gituser == 1]; then
-		gituser = $USER
-	elif [$gituser == 2]; then
-		gituser = git
+	read -p "Enter 1 or 2: " gituser_question
+	if [$gituser_question == "1"]; then
+		gituser=$USER
+	elif [$gituser_question == "2"]; then
+		gituser="git"
 	else
 		die "Not a valid choice, re-run and try again."
 	fi		
