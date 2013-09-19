@@ -135,3 +135,7 @@ Updates Ubuntu /etc/apt/sources.list to default based on whatever version you ar
 - [Delta/Fran](http://buyvm.net)
 - [The_Hatta](irc://irc.frantech.ca)
 - [DigitalOcean](http://digitalocean.com)
+
+#### People that have helped along the way
+
+- [vt0r/Salvatore LaMendola](https://github.com/jogfsovt/)
