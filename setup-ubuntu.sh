@@ -604,29 +604,28 @@ function git_deploy {
 	print_info "1) Use current user ($USER) to push repo"
 	print_info "2) Use the user \"git\" to push the repo"
 	read -p "Enter 1 or 2: " gituser_question
-	if [$gituser_question == "1"]; then
-		gituser=$USER
-	elif [$gituser_question == "2"]; then
-		gituser="git"
+	if [ $gituser_question == "1" ]; then
+		gituser = $USER
+	elif [ $gituser_question == "2" ]; then
+		gituser= "git"
 	else
 		die "Not a valid choice, re-run and try again."
-	fi		
-	local wordpress, theme, themefolder
-	local serverip=$(get_ip)
-	local sshport=${SSH_CLIENT##* }
-	install_git
+	fi
+	serverip=$(get_ip)
+	sshport=${SSH_CLIENT##* }
+	check_install git git
 	cd $1
 	git --bare init repo
 	cd /var/www/$1/repo/hooks
-	git clone https://github.com/marshallford/gitdeploy.git .
+	wget https://github.com/marshallford/gitdeploy/blob/master/post-receive
 	chmod +x post-receive
 	sed -i 's/yourdomain.com/$1/g' post-receive
 
 	read -p "Is $1 a WordPress install? (y/n): " wordpress
-	if [$wordpress == "y"]; then
+	if [ $wordpress == "y" ]; then
 		read -p "Will you just be pushing your theme folder? (y/n): " theme
 	fi
-	if [$theme == "y"]; then
+	if [ $theme == "y" ]; then
 		read -p "Enter your desired theme folder name: " themefolder
 		cd /var/www/$1/public/wp-content/themes
 		mkdir $themefolder
@@ -793,11 +792,11 @@ function show_os_arch_version {
 ############################################################
 # script compatible with NATed servers.
 function get_ip {
-IP=$(ifconfig | grep 'inet addr:' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d: -f2 | awk '{ print $1}')
-if [ "$IP" = "" ]; then
-        IP=$(wget -qO- ipv4.icanhazip.com)
-fi
-echo "$ip"
+	IP=$(wget -qO- ipv4.icanhazip.com)	
+	if [ "$IP" = "" ]; then
+    	IP=$(ifconfig | grep 'inet addr:' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d: -f2 | awk '{ print $1}')
+	fi
+	echo $IP
 }
 
 ############################################################
