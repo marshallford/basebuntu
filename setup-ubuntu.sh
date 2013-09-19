@@ -613,7 +613,7 @@ function git_deploy {
 	fi
 	serverip=$(get_ip)
 	sshport=${SSH_CLIENT##* }
-	check_install git git
+	install_git
 	cd $1
 	git --bare init repo
 	cd /var/www/$1/repo/hooks

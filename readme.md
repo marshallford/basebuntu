@@ -96,11 +96,11 @@ Updates Ubuntu /etc/apt/sources.list to default based on whatever version you ar
 
 	./setup-ubuntu.sh info
 
-#### Fixing locale on some OpenVZ Ubuntu templates
+##### Fixing locale on some OpenVZ Ubuntu templates
 
 	./setup-ubuntu.sh locale
 
-#### Configure or reconfigure MOTD
+##### Configure or reconfigure MOTD
 
 	./setup-ubuntu.sh motd
 
