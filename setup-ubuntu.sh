@@ -633,7 +633,11 @@ function git_deploy {
 		cd /var/www/$1/repo/hooks
 		sed -i 's|ln -f -s $website/deployment/$current $website/public|ln -f -s $website/deployment/$current $website/public/wp-content/themes/'$themefolder'|' post-receive
 	fi
-	print_info "Add this remote git repo to push to: ssh://${gituser}@${serverip}:${sshport}/var/www/${1}/repo"
+    if [ "$sshport" == "22" ]; then
+        print_info "Add this remote git repo to push to: ssh://${gituser}@${serverip}/var/www/${1}/repo"
+    else
+        print_info "Add this remote git repo to push to: ssh://${gituser}@${serverip}:${sshport}/var/www/${1}/repo"
+    fi
 	unset gituser
 }
 
