@@ -184,7 +184,7 @@ function install_ufw {
 	fi
 
 	# Reconfigure sshd - change port
-    sed -i 's/^Port [0-9]*/Port '$1'/' /etc/ssh/sshd_config
+	sed -i 's/^Port [0-9]*/Port '$1'/' /etc/ssh/sshd_config
     service ssh reload
 
 	ufw disable
@@ -588,6 +588,7 @@ function remove_unneeded {
 		check_remove /usr/lib/sm.bin/smtpd 'sendmail*'
 	fi
 }
+
 ############################################################
 # Git deployment system
 ############################################################
@@ -617,7 +618,7 @@ function git_deploy {
 	cd $1
 	git --bare init repo
 	cd /var/www/$1/repo/hooks
-	wget https://github.com/marshallford/gitdeploy/blob/master/post-receive
+	wget https://raw.github.com/marshallford/gitdeploy/master/post-receive
 	chmod +x post-receive
 	sed -i 's/yourdomain.com/$1/g' post-receive
 
