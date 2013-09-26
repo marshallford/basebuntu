@@ -696,7 +696,7 @@ function install_ps_mem {
 ############################################################
 function update_apt_sources {
     eval `grep '^NAME=' /etc/os-release 2>/dev/null`
-	eval `grep '^DISTRIB_CODENAME=' /etc/os-release 2>/dev/null`
+    eval `grep '^DISTRIB_CODENAME=' /etc/os-release 2>/dev/null`
 
 	if [ "$NAME" == "Ubuntu" ] && [ "$DISTRIB_CODENAME" == "" ]
 	then
