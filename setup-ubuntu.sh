@@ -395,7 +395,10 @@ END
 	# restart nginx
 	invoke-rc.d nginx restart
 }
-
+function www-data_permissions {
+	cd /var
+	chmod -R g+rwxs www
+}
 function install_site {
 
 	if [ -z "$1" ]
@@ -456,7 +459,7 @@ END
 	chown www-data:www-data -R "/var/www/$1"
 
 	invoke-rc.d nginx restart
-
+	www-data_permissions
 	print_warn "New site successfully installed."
 }
 
@@ -562,7 +565,7 @@ END
 	chown www-data:www-data -R "/var/www/$1"
 
 	invoke-rc.d nginx restart
-
+	www-data_permissions
 	print_warn "New wordpress site successfully installed."
 }
 
@@ -598,7 +601,7 @@ function git_deploy {
 		die "Usage: `basename $0` gitdeploy [domain.tld]"
 	fi
 	cd /var/www
-	if [ ! -d "$1" ] 
+	if [ ! -d "$1" ]
 	then
 		die "The website $1 doesn't exist or hasn't been created yet"
 	fi
@@ -798,7 +801,7 @@ function show_os_arch_version {
 ############################################################
 # script compatible with NATed servers.
 function get_ip {
-	IP=$(wget -qO- ipv4.icanhazip.com)	
+	IP=$(wget -qO- ipv4.icanhazip.com)
 	if [ "$IP" = "" ]; then
     	IP=$(ifconfig | grep 'inet addr:' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d: -f2 | awk '{ print $1}')
 	fi
@@ -880,7 +883,7 @@ test)
 	;;
 gitdeploy)
 	git_deploy $2
-	;;	
+	;;
 harden_ssh)
 	harden_ssh $2
 	;;
