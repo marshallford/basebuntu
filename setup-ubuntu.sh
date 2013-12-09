@@ -695,18 +695,30 @@ function install_ps_mem {
 }
 
 ############################################################
-# Update apt sources (Ubuntu only; not yet supported for debian)
+# Update apt sources (Ubuntu and Debian)
 ############################################################
 function update_apt_sources {
-	eval `grep '^DISTRIB_CODENAME=' /etc/*-release 2>/dev/null`
+    eval `grep '^NAME=' /etc/os-release 2>/dev/null`
+    eval `grep '^DISTRIB_CODENAME=' /etc/os-release 2>/dev/null`
 
-	if [ "$DISTRIB_CODENAME" == "" ]
+	if [ "$NAME" == "Ubuntu" ] && [ "$DISTRIB_CODENAME" == "" ]
 	then
 		die "Unknown Ubuntu flavor $DISTRIB_CODENAME"
-	fi
+	elif [ "$NAME" == "Debian GNU/Linux" ]
+    then
+        echo "## Added by setup-ubuntu.sh
+deb http://ftp.us.debian.org/debian stable main contrib non-free
+deb-src http://ftp.us.debian.org/debian stable main contrib non-free
 
-	cat > /etc/apt/sources.list <<END
-## main & restricted repositories
+deb http://ftp.debian.org/debian/ stable-updates main contrib non-free
+deb-src http://ftp.debian.org/debian/ stable-updates main contrib non-free
+
+deb http://security.debian.org/ stable/updates main contrib non-free
+deb-src http://security.debian.org/ stable/updates main contrib non-free" > /etc/apt/sources.list
+
+        print_info "/etc/apt/sources.list updated for Debian Stable"
+    else
+        echo "## main & restricted repositories
 deb http://us.archive.ubuntu.com/ubuntu/ $DISTRIB_CODENAME main restricted
 deb-src http://us.archive.ubuntu.com/ubuntu/ $DISTRIB_CODENAME main restricted
 
@@ -724,10 +736,11 @@ deb http://us.archive.ubuntu.com/ubuntu/ $DISTRIB_CODENAME-updates universe
 deb-src http://us.archive.ubuntu.com/ubuntu/ $DISTRIB_CODENAME-updates universe
 
 deb http://security.ubuntu.com/ubuntu $DISTRIB_CODENAME-security universe
-deb-src http://security.ubuntu.com/ubuntu $DISTRIB_CODENAME-security universe
-END
+deb-src http://security.ubuntu.com/ubuntu $DISTRIB_CODENAME-security universe" > /etc/apt/sources.list
 
-	print_info "/etc/apt/sources.list updated for "$DISTRIB_CODENAME
+	    print_info "/etc/apt/sources.list updated for ${DISTRIB_CODENAME}"
+    fi
+
 }
 
 ############################################################

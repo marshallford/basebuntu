@@ -88,7 +88,7 @@ Neat python script to report memory usage per app
 
 ##### sources.list updating
 
-Updates Ubuntu /etc/apt/sources.list to default based on whatever version you are running
+Updates Ubuntu/Debian /etc/apt/sources.list to default based on whatever version you are running (Debian is always stable)
 
 	./setup-ubuntu.sh apt
 
@@ -138,4 +138,4 @@ Updates Ubuntu /etc/apt/sources.list to default based on whatever version you ar
 
 #### People that have helped along the way
 
-- [vt0r/Salvatore LaMendola](https://github.com/jogfsovt/)
+- [Salvatore LaMendola](https://github.com/jogfsovt/)
