@@ -118,8 +118,8 @@ Updates Ubuntu /etc/apt/sources.list to default based on whatever version you ar
 #### Orginal
 
 - [LowEndBox admin (LEA)](https://github.com/lowendbox/lowendscript)
-- [Xeoncross](https://github.com/Xeoncross/lowendscript),
-- [ilevkov](https://github.com/ilevkov/lowendscript),
+- [Xeoncross](https://github.com/Xeoncross/lowendscript)
+- [ilevkov](https://github.com/ilevkov/lowendscript)
 - [asimzeeshan](https://github.com/asimzeeshan)
 
 #### Additional Credits from LET
@@ -130,10 +130,10 @@ Updates Ubuntu /etc/apt/sources.list to default based on whatever version you ar
 - [emg](http://lowendtalk.com/profile/13220/emg)
 - [azizmb](http://lowendtalk.com/profile/3240/azizmb)
 
-#### Great Hosts/People
+#### Great Companies/People
 
 - [Delta/Fran](http://buyvm.net)
-- [The_Hatta](irc://irc.frantech.ca)
+- [The_Hatta](http://wiki.frantech.ca/doku.php/irc:main)
 - [DigitalOcean](http://digitalocean.com)
 
 #### People that have helped along the way
