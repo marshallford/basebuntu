@@ -672,6 +672,17 @@ function harden_ssh {
 	fi
 	print_info "SSH hardening sucessful"
 }
+############################################################
+# Harden sysctl.conf
+############################################################
+function harden_sysctl {
+	# Basic hardening of sysctl.conf
+	sed -i 's/^#net.ipv4.conf.all.accept_source_route = 0/net.ipv4.conf.all.accept_source_route = 0/' /etc/sysctl.conf
+	sed -i 's/^net.ipv4.conf.all.accept_source_route = 1/net.ipv4.conf.all.accept_source_route = 0/' /etc/sysctl.conf
+	sed -i 's/^#net.ipv6.conf.all.accept_source_route = 0/net.ipv6.conf.all.accept_source_route = 0/' /etc/sysctl.conf
+	sed -i 's/^net.ipv6.conf.all.accept_source_route = 1/net.ipv6.conf.all.accept_source_route = 0/' /etc/sysctl.conf
+}
+
 
 ############################################################
 # Fail2ban install and config file move
@@ -897,6 +908,7 @@ system)
 	update_timezone
 	remove_unneeded
 	update_upgrade
+	harden_sysctl
 	install_dash
 	install_git
 	install_vim
