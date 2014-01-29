@@ -14,7 +14,7 @@ Remove excess packages (apache2, sendmail, bind9, samba, nscd, etc) and install 
  - MariaDB (v10, based on MySQL 5.6)
  - PHP-FPM (v5.3+ with APC installed and configured)
  - nginx (configured for lowend VPS. Change worker_processes in nginx.conf according to number of CPUs)
- - git, vim, nano, mc, htop, iftop & iotop
+ - git (from ppa), vim, nano, mc, htop, iftop & iotop
 
 **Note:** When running the UFW command you must specify a SSH port. Remember, port 22 is the default. It's recommended that you change this from 22 just to save server load from attacks on that port.
 
@@ -41,6 +41,12 @@ The script also includes a basic WordPress setup function, just remember to setu
 	./setup-ubuntu.sh wordpress example-domain.tld
 
 ## Extra Commands
+
+##### WWW Permissions
+
+Run to make sure the proper permissions are set for /var/www. This includes both setting the owner and group to www-data and giving group members of www-data rwx permssions. This allows for a deploy user account to push websites to the server.
+
+	./setup-ubuntu.sh permissions
 
 ##### Harden openSSH
 

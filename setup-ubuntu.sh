@@ -129,6 +129,9 @@ function install_vim {
 }
 
 function install_git {
+	check_install python-software-properties python-software-properties
+	add-apt-repository ppa:git-core/ppa
+	update_upgrade
 	check_install git git
 }
 
@@ -396,8 +399,8 @@ END
 	invoke-rc.d nginx restart
 }
 function www-data_permissions {
-	cd /var
-	chmod -R g+rwxs www
+	chown -R www-data:www-data /var/www
+	chmod -R g+rwxs /var/www
 }
 function install_site {
 
@@ -898,6 +901,9 @@ gitdeploy)
 harden_ssh)
 	harden_ssh $2
 	;;
+permissions)
+	www-data_permissions
+	;;
 fail2ban)
 	f2b
 	;;
@@ -925,20 +931,21 @@ system)
 	echo '  '
 	echo 'Usage:' `basename $0` '[option] [argument]'
 	echo 'Available options (in recomended order):'
-	echo '  - system                 (remove unneeded, upgrade system, install software)'
-	echo '  - ufw [port]             (setup basic firewall with HTTP(S) open)'
-	echo '  - MariaDB                (install MySQL alternative and set root password)'
-	echo '  - nginx                  (install nginx and create sample PHP vhosts)'
-	echo '  - php                    (install PHP5-FPM with APC, cURL, suhosin, etc...)'
-	echo '  - site [domain.tld] 	 (create nginx vhost and /var/www/$site/public)'
-	echo '  - wordpress [domain.tld] (create nginx vhost and /var/www/$wordpress/public)'
+	echo '  - system                 (Remove unneeded, upgrade system, install software)'
+	echo '  - ufw [port]             (Setup basic firewall with HTTP(S) and SSH open)'
+	echo '  - MariaDB                (Install MySQL alternative and set root password)'
+	echo '  - nginx                  (Install nginx and create sample PHP vhosts)'
+	echo '  - php                    (Install PHP5-FPM with APC, cURL, suhosin, etc...)'
+	echo '  - permissions            (Make sure the proper permissions are set for /var/www)'
+	echo '  - site [domain.tld] 	 (Create nginx vhost and /var/www/$site/public)'
+	echo '  - wordpress [domain.tld] (Create nginx vhost and /var/www/$wordpress/public)'
 	echo '  '
 	echo '... and now some extras'
 	echo '  - harden_ssh [option #]  (Hardens openSSH with PermitRoot and PasswordAuthentication)'
 	echo '  - fail2ban               (Installs fail2ban and creates a config file)'
 	echo '  - gitdeploy [domain.tld] (Installs and configures a deployment system using git)'
 	echo '  - info                   (Displays information about the OS, ARCH and VERSION)'
-	echo '  - apt                    (update sources.list)'
+	echo '  - apt                    (Update sources.list)'
 	echo '  - ps_mem                 (Download the handy python script to report memory usage)'
 	echo '  - vzfree                 (Install vzfree for correct memory reporting on OpenVZ VPS)'
 	echo '  - motd                   (Configures and enables the default MOTD)'
