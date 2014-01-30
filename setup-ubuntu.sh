@@ -117,6 +117,9 @@ function install_iotop {
 function install_screen {
 	check_install screen screen
 }
+function install_curl {
+	check_install curl curl
+}
 
 function install_iftop {
 	check_install iftop iftop
@@ -921,6 +924,7 @@ system)
 	install_nano
 	install_htop
 	install_screen
+	install_curl
 	install_iotop
 	install_iftop
 	install_syslogd
