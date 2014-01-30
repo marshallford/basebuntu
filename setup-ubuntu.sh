@@ -130,7 +130,7 @@ function install_vim {
 
 function install_git {
 	check_install python-software-properties python-software-properties
-	add-apt-repository ppa:git-core/ppa
+	add-apt-repository ppa:git-core/ppa -y
 	update_upgrade
 	check_install git git
 }
@@ -196,7 +196,7 @@ function install_ufw {
 	ufw allow http
 	ufw allow https
 	ufw allow $1
-	ufw enable
+	ufw --force enable
 
 }
 
