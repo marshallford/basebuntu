@@ -117,8 +117,14 @@ function install_iotop {
 function install_screen {
 	check_install screen screen
 }
+
 function install_curl {
 	check_install curl curl
+}
+
+function install_zip {
+	check_install unzip unzip
+	check_install zip zip
 }
 
 function install_iftop {
@@ -927,6 +933,7 @@ system)
 	install_curl
 	install_iotop
 	install_iftop
+	install_zip
 	install_syslogd
 	apt_clean
 	;;
