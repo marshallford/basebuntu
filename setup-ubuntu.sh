@@ -340,9 +340,29 @@ location ~ \.php$ {
 # never executes the hidden php code inside virusimage.jpg because it can't find hello.php!
 # The exploit also can be stopped by adding "cgi.fix_pathinfo = 0" in your php.ini file.
 END
-
 	echo 'Created /etc/nginx/php.conf for PHP sites'
-
+	cat > /etc/nginx/caching.conf <<END
+location ~* \.(js|css|png|jpg|jpeg|gif|bmp|ico|tff|eot|woff|svg|svgz|xml)$ {
+    expires max;
+    log_not_found off;
+    access_log off;
+}
+location = /favicon.ico {
+    log_not_found off;
+    access_log off;
+}
+location = /robots.txt {
+    allow all;
+    log_not_found off;
+    access_log off;
+}
+location ~ /\. {
+    deny all;
+    access_log off;
+    log_not_found off;
+}
+END
+	echo 'Created /etc/nginx/caching.conf for caching and security'
  if [ -f /etc/nginx/nginx.conf ]
 	then
 		# one worker for each CPU and max 1024 connections/worker
