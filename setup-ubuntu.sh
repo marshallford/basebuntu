@@ -302,50 +302,7 @@ function install_nginx {
 
 	mkdir -p /var/www
 
-	# PHP-safe default vhost
-	cat > /etc/nginx/sites-available/default_php <<END
-# Creates unlimited domains for PHP sites as long as you add the
-# entry to /etc/hosts and create the matching \$host folder.
-server {
-	listen 80 default;
-	server_name _;
-	root /var/www/\$host/public;
-	index index.html index.htm index.php;
-
-	# Directives to send expires headers and turn off 404 error logging.
-	location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
-		expires max;
-		log_not_found off;
-		access_log off;
-	}
-
-	location = /favicon.ico {
-		log_not_found off;
-		access_log off;
-	}
-
-	location = /robots.txt {
-		allow all;
-		log_not_found off;
-		access_log off;
-	}
-
-	## Disable viewing .htaccess & .htpassword
-	location ~ /\.ht {
-		deny  all;
-	}
-
-	include /etc/nginx/php.conf;
-}
-END
-
-	# MVC frameworks with only a single index.php entry point (nginx > 0.7.27)
 	cat > /etc/nginx/php.conf <<END
-# Route all requests for non-existent files to index.php
-location / {
-	try_files \$uri \$uri/ /index.php\$is_args\$args;
-}
-
 # Pass PHP scripts to php-fastcgi listening on port 9000
 location ~ \.php$ {
 
@@ -385,8 +342,6 @@ location ~ \.php$ {
 END
 
 	echo 'Created /etc/nginx/php.conf for PHP sites'
-	echo 'Created /etc/nginx/sites-available/default_php sample vhost'
-	echo ' '
 
  if [ -f /etc/nginx/nginx.conf ]
 	then
@@ -418,9 +373,11 @@ function install_site {
 		die "Usage: `basename $0` site [domain.tld]"
 	fi
 
-	# Setup folder
+	# Setup folder and logs
 	mkdir /var/www/$1
 	mkdir /var/www/$1/public
+	touch /var/www/$1/error.log
+	touch /var/www/$1/access.log
 
 	# Setup default index.html file
 	cat > "/var/www/$1/public/index.html" <<END
@@ -429,46 +386,34 @@ END
 	# Setting up Nginx mapping
 	cat > "/etc/nginx/sites-available/$1.conf" <<END
 server {
-	listen [::]:80;
-	server_name www.$1 $1;
-	root /var/www/$1/public;
-	try_files $uri.html $uri.htm $uri.php $uri/ =404;
-	client_max_body_size 32m;
-
+	listen 80;
+	server_name $1;
 	access_log  /var/www/$1/access.log;
 	error_log  /var/www/$1/error.log;
-
-	# Directives to send expires headers and turn off 404 error logging.
-	location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
-		expires max;
-		log_not_found off;
-		access_log off;
-	}
-
-	location = /favicon.ico {
-		log_not_found off;
-		access_log off;
-	}
-
-	location = /robots.txt {
-		allow all;
-		log_not_found off;
-		access_log off;
-	}
-
-	## Disable viewing .htaccess & .htpassword
-	location ~ /\.ht {
-		deny  all;
-	}
-
+	index index.html;
+	error_page 404 403 /404.html;
+    # Remove slash if request isn't a folder
+    if (!-d "${request_filename}") {
+        rewrite ^/(.*)/$ /$1 permanent;
+    }
+    # Remove index.html
+    if ($request_uri ~* "/index.html") {
+        rewrite (?i)^(.*)index\.html$ $1 permanent;
+    }
+    # Remove .html
+    if ($request_uri ~* ".html") {
+        rewrite (?i)^(.*)/(.*)\.html $1/$2 permanent;
+    }
+    # Main Location
+    location / {
+        try_files $uri.html $uri/ =404;
+    }
+	include /etc/nginx/caching.conf;
 	include /etc/nginx/php.conf;
 }
 END
 	# Create the link so nginx can find it
 	ln -s /etc/nginx/sites-available/$1.conf /etc/nginx/sites-enabled/$1.conf
-
-	# PHP/Nginx needs permission to access this
-	chown www-data:www-data -R "/var/www/$1"
 
 	invoke-rc.d nginx restart
 	www-data_permissions
@@ -498,7 +443,7 @@ function install_wordpress {
 	cat > "/etc/nginx/sites-available/$1.conf" <<END
 server {
 	listen 80;
-	server_name www.$1 $1;
+	server_name $1;
 	root /var/www/$1/public;
 	index index.php;
 
@@ -572,9 +517,6 @@ server {
 END
 	# Create the link so nginx can find it
 	ln -s /etc/nginx/sites-available/$1.conf /etc/nginx/sites-enabled/$1.conf
-
-	# PHP/Nginx needs permission to access this
-	chown www-data:www-data -R "/var/www/$1"
 
 	invoke-rc.d nginx restart
 	www-data_permissions
