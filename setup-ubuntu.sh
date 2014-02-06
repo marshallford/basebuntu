@@ -192,6 +192,8 @@ function install_ufw {
 
 	if [ -z "$1" ]
 	then
+
+
 		die "Usage: `basename $0` ufw [ssh-port-#]"
 	fi
 
@@ -383,7 +385,14 @@ END
 	invoke-rc.d nginx restart
 }
 function www-data_permissions {
-	chown -R www-data:www-data /var/www
+	if [ -z "$1" ]
+	then
+		chown -R www-data:www-data /var/www
+		print_info "User www-data is now the owner of the www directory"
+	else
+		chown -R $1:$1 /var/www
+		print_info "User $1 is now the owner of the www directory"
+	fi
 	chmod -R g+rwxs /var/www
 }
 function install_site {
@@ -873,7 +882,7 @@ harden_ssh)
 	harden_ssh $2
 	;;
 permissions)
-	www-data_permissions
+	www-data_permissions $2
 	;;
 fail2ban)
 	f2b
