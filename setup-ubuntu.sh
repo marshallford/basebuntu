@@ -422,20 +422,20 @@ server {
 	index index.html;
 	error_page 404 403 /404.html;
     # Remove slash if request isn't a folder
-    if (!-d "${request_filename}") {
-        rewrite ^/(.*)/$ /$1 permanent;
+    if (!-d "\${request_filename}") {
+        rewrite ^/(.*)/$ /\$1 permanent;
     }
     # Remove index.html
-    if ($request_uri ~* "/index.html") {
-        rewrite (?i)^(.*)index\.html$ $1 permanent;
+    if (\$request_uri ~* "/index.html") {
+        rewrite (?i)^(.*)index\.html$ \$1 permanent;
     }
     # Remove .html
-    if ($request_uri ~* ".html") {
-        rewrite (?i)^(.*)/(.*)\.html $1/$2 permanent;
+    if (\$request_uri ~* ".html") {
+        rewrite (?i)^(.*)/(.*)\.html \$1/\$2 permanent;
     }
     # Main Location
     location / {
-        try_files $uri.html $uri/ =404;
+        try_files \$uri.html \$uri/ =404;
     }
 	include /etc/nginx/caching.conf;
 	include /etc/nginx/php.conf;
@@ -488,28 +488,7 @@ server {
     # catch all
     error_page 404 /index.php;
 
-    # Directives to send expires headers and turn off 404 error logging.
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
-        expires max;
-        log_not_found off;
-        access_log off;
-    }
-
-    location = /favicon.ico {
-        log_not_found off;
-        access_log off;
-    }
-
-    location = /robots.txt {
-        allow all;
-        log_not_found off;
-        access_log off;
-    }
-
-    ## Disable viewing .htaccess & .htpassword
-    location ~ /\.ht {
-        deny  all;
-    }
+	include /etc/nginx/caching.conf;
 
     location / {
                 # This is cool because no php is touched for static content.
