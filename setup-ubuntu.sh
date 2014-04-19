@@ -708,17 +708,16 @@ END
 # Full Update/Upgrade (no release update)
 ############################################################
 function super_update {
-	apt-get -q -y update
-	apt-get -q -y upgrade
-	apt-get -q -y dist-upgrade
-	## run again for good measure
-	apt-get -q -y update
-	apt-get -q -y upgrade
-	apt-get -q -y dist-upgrade
-	# clean up
-	apt-get -q -y autoremove
-	apt-get -q -y autoclean
-	apt-get -q -y clean
+	for i in 1 2
+	do
+		apt-get -q -y update
+		apt-get -q -y upgrade
+		apt-get -q -y dist-upgrade
+		# clean up
+		apt-get -q -y autoremove
+		apt-get -q -y autoclean
+		apt-get -q -y clean
+	done
 }
 
 ############################################################
