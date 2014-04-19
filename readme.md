@@ -102,6 +102,12 @@ Updates Ubuntu /etc/apt/sources.list to default based on whatever version you ar
 
 	./setup-ubuntu.sh apt
 
+##### Super Updater
+
+Runs a full update and upgrade of packages and then cleans up. This command will not upgrade to a newer release cycles. Ex: 12.04 LTS > 12.10.
+
+	./setup-ubuntu.sh super_updater
+
 ##### Info on Operating System, version and Architecture
 
 	./setup-ubuntu.sh info

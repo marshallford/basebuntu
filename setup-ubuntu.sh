@@ -633,6 +633,7 @@ function harden_ssh {
 	else
 		die "Usage: `basename $0` harden_ssh [option #]"
 	fi
+	reload ssh
 	print_info "SSH hardening sucessful"
 }
 ############################################################
@@ -702,6 +703,22 @@ deb-src http://security.ubuntu.com/ubuntu $DISTRIB_CODENAME-security universe
 END
 
 	print_info "/etc/apt/sources.list updated for "$DISTRIB_CODENAME
+}
+############################################################
+# Full Update/Upgrade (no release update)
+############################################################
+function super_update {
+	apt-get -q -y update
+	apt-get -q -y upgrade
+	apt-get -q -y dist-upgrade
+	## run again for good measure
+	apt-get -q -y update
+	apt-get -q -y upgrade
+	apt-get -q -y dist-upgrade
+	# clean up
+	apt-get -q -y autoremove
+	apt-get -q -y autoclean
+	apt-get -q -y clean
 }
 
 ############################################################
@@ -846,6 +863,9 @@ ps_mem)
 apt)
 	update_apt_sources
 	;;
+super_updater)
+	super_update
+	;;
 vzfree)
 	install_vzfree
 	;;
@@ -908,6 +928,7 @@ system)
 	echo '  - gitdeploy [domain.tld] (Installs and configures a deployment system using git)'
 	echo '  - info                   (Displays information about the OS, ARCH and VERSION)'
 	echo '  - apt                    (Update sources.list)'
+	echo '  - super_updater          (Updates/upgrades packages)'
 	echo '  - ps_mem                 (Download the handy python script to report memory usage)'
 	echo '  - vzfree                 (Install vzfree for correct memory reporting on OpenVZ VPS)'
 	echo '  - motd                   (Configures and enables the default MOTD)'
