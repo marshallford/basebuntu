@@ -44,13 +44,19 @@ The script also includes a basic WordPress setup function, just remember to setu
 
 ##### WWW Permissions
 
-Sets the proper permissions for `/var/www`. This includes both setting the owner and group to www-data and giving group members of www-data rwx permssions. This allows for a deploy user account to push websites to the server.
+Sets the proper permissions for `/var/www`. This includes setting the owner and group to www-data and giving group members of www-data rwx permssions. This allows a deployment user that is a member of www-data to push websites to the server.
 
 	./setup-ubuntu.sh permissions
 
-To set the owner of the www directory to a user other than www-data use the permissions command followed by the name of the user.
+To set the owner and group of `/var/www` to something other than www-data use the permissions command followed by the name of the user.
 
 	./setup-ubuntu.sh permissions user_name_here
+
+##### External IP
+
+To get the server's external IP address.
+
+	./setup-ubuntu.sh ip
 
 ##### Harden openSSH
 

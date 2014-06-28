@@ -137,8 +137,11 @@ function install_vim {
 	check_install vim vim
 }
 
-function install_git {
+function install_ppa_support {
 	check_install python-software-properties python-software-properties
+}
+
+function install_git {
 	add-apt-repository ppa:git-core/ppa -y
 	update_upgrade
 	check_install git git
@@ -213,8 +216,7 @@ function install_ufw {
 
 function install_mariadb {
 
-	# Install dependencies and repository
-	check_install python-software-properties python-software-properties
+	# Install repository
 	apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
 	add-apt-repository 'deb http://ftp.osuosl.org/pub/mariadb/repo/10.0/ubuntu precise main'
 	apt-get update
@@ -889,11 +891,15 @@ fail2ban)
 info)
 	show_os_arch_version
 	;;
+ip)
+	get_ip
+	;;
 system)
 	update_timezone
 	remove_unneeded
 	update_upgrade
 	harden_sysctl
+	install_ppa_support
 	install_dash
 	install_git
 	install_vim
@@ -926,6 +932,7 @@ system)
 	echo '  - fail2ban               (Installs fail2ban and creates a config file)'
 	echo '  - gitdeploy [domain.tld] (Installs and configures a deployment system using git)'
 	echo '  - info                   (Displays information about the OS, ARCH and VERSION)'
+	echo '  - ip                     (Displays the external IP address of the server)'
 	echo '  - apt                    (Update sources.list)'
 	echo '  - super_updater          (Updates/upgrades packages)'
 	echo '  - ps_mem                 (Download the handy python script to report memory usage)'
