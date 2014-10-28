@@ -1,26 +1,24 @@
-# LowEndUbuntu
+# www-ubuntu
 
-Written for a 512MB/1GB Ubuntu VPS. I realize this isn't exactly "low end", but this script is made for high traffic sites on a budget. Tip: This is perfect for Digital Ocean's $5/month SSD server.
+This script is specifically designed for budget boxes running the latest version of Ubuntu Server LTS (currently 14.04). This will run great on a Linode 1GB VPS or Digital Ocean 512MB VPS.
 
-[TO-DO](todo.md)
-
---
+## Purpose
 
 Remove excess packages (apache2, sendmail, bind9, samba, nscd, etc) and install the basic components needed for a light-weight HTTP(S) web server:
 
- - ufw (firewall)
- - dash (replaces bash)
- - syslogd
- - MariaDB (v10, based on MySQL 5.6)
- - PHP-FPM (v5.3+ with APC installed and configured)
- - nginx (configured for lowend VPS. Change worker_processes in nginx.conf according to number of CPUs)
- - git (from ppa), vim, nano, mc, htop, iftop & iotop
-
-**Note:** When running the UFW command you must specify a SSH port. Remember, port 22 is the default. It's recommended that you change this from 22 just to save server load from attacks on that port.
+ - Ufw (firewall)
+ - MariaDB (database)
+ - PHP-FPM (alternative to mod_php)
+ - Nginx (web server with https/SPDY support)
+ - Pagespeed (Ngnix module for reducing page load time)
+ - Git (verion control, latest build installed)
+ - Fail2ban (dynamic protection framework)
+ - Other tools required for running a web server
+ - Custom commands for easy administration
 
 ## Usage (in recommended order)
 
-### Warning! This script will overwrite previous configs during reinstallation.
+### Warning! This script will overwrite previous configs during re-installation.
 
 	cd ~; wget --no-check-certificate https://raw.github.com/marshallford/lowendubuntu/master/setup-ubuntu.sh; chmod +x setup-ubuntu.sh
 
