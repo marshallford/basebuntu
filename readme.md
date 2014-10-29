@@ -17,7 +17,8 @@ Remove excess packages and install the basic components needed for a light-weigh
 
 **Warning! This script will overwrite previous configs during re-installation.**
 
-	cd ~; wget --no-check-certificate https://raw.github.com/marshallford/lowendubuntu/master/setup-ubuntu.sh; chmod +x setup-ubuntu.sh
+	apt-get update; apt-get install git -y; git clone https://github.com/marshallford/www-ubuntu
+	cd ~/www-ubuntu; chmod +x www-ubuntu.sh; ./www-ubuntu.sh
 
 	./www-ubuntu.sh setup
 	./www-ubuntu.sh firewall [port]
