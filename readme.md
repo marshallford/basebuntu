@@ -57,7 +57,7 @@ Hardens openSSH with PermitRoot and PasswordAuthentication
 
 4 = Normal users can login with SSH-keys or plain passwords, root can only login via SSH-keys.
 
-##### Fail2ban (bruteforce/Dos firewall)
+##### Fail2ban (bruteforce/DOS firewall)
 
 Installs a firewall to protect against bruteforce attacks on ssh and http(s) ports.
 

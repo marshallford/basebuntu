@@ -125,8 +125,14 @@ function ppaSupport
 
 function hardenSysctl
 {
-	cat sysctl-append.conf >> /etc/sysctl.conf
-	sysctl -p
+	source www-ubuntu.conf
+	if [ hasHardenSysctlRun == false ]
+	then
+		cat sysctl-append.conf >> /etc/sysctl.conf
+		sysctl -p
+	else
+		printWarn "hardenSysctl has already been run on this system, function skipped."
+	fi
 }
 
 function ppaGit
@@ -182,14 +188,12 @@ function installMariadb
 function installUfw
 {
 	checkInstall ufw ufw
-
 	if [ -z "$1" ]
 	then
 
 
 		die "Usage: `basename $0` ufw [ssh-port-#]"
 	fi
-
 	# Reconfigure sshd - change port
 	sed -i 's/^Port [0-9]*/Port '$1'/' /etc/ssh/sshd_config
     service ssh restart
@@ -271,6 +275,34 @@ function getIp
 }
 
 # harden-ssh [option #]
+function hardenSsh
+{
+	if [ -z "$1" ]
+	then
+		die "Usage: `basename $0` harden_ssh [option #]"
+	fi
+	if [ "$1" == 1 ] # All users including root can only login via SSH-keys.
+	then
+		sed -i 's/PermitRootLogin.*/PermitRootLogin without-password/' /etc/ssh/sshd_config
+		sed -i 's/#PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+	elif [ "$1" == 2 ] # Normal users can login via SSH-keys, root can't login at all.
+	then
+		sed -i 's/PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+		sed -i 's/#PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+	elif [ "$1" == 3 ] # Root can't login, normal users can use SSH-keys or plain passwords.
+	then
+		sed -i 's/PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+		sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+	elif [ "$1" == 4 ] # Normal users can login with SSH-keys or plain passwords, root can only login via SSH-keys.
+	then
+		sed -i 's/PermitRootLogin.*/PermitRootLogin without-password/' /etc/ssh/sshd_config
+		sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+	else
+		die "Usage: `basename $0` harden_ssh [option #]"
+	fi
+	service ssh restart
+	printInfo "SSH hardening sucessful"
+}
 
 # www-restart
 function wwwRestart
