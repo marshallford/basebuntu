@@ -101,7 +101,7 @@ function baseInstaller
 	installer curl curl
 	installer screen screen
 	installer gt5 gt5 # visual disk usage
-	installer dnsutils dnsutils # dns tools
+	installer nslookup dnsutils # dns tools
 	ppaGit # verison control
 }
 
