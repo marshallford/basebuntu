@@ -17,7 +17,7 @@ function installer
 		do
 			DEBIAN_FRONTEND=noninteractive apt-get -q -y install "$1"
 			apt-get clean
-			printInfo "$1 installed for $executable"
+			printInfo "$executable installed"
 			shift
 		done
 	else
@@ -33,7 +33,7 @@ function uninstaller
 	then
 		DEBIAN_FRONTEND=noninteractive apt-get -q -y remove --purge "$2"
 		apt-get clean
-		printInfo "$2 removed"
+		printInfo "$2 uninstalled"
 	else
 		printWarn "$2 is not installed"
 	fi
@@ -140,7 +140,8 @@ function ppaGit
 {
 	add-apt-repository ppa:git-core/ppa -y
 	apt-get update
-	installer git git
+	apt-get upgrade -y # git was installed to pull in www-ubuntu
+	printInfo "git was upgraded to the ppa verison"
 }
 
 function baseSetup
