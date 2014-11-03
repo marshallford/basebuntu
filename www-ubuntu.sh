@@ -120,13 +120,13 @@ function setTimezone
 
 function ppaSupport
 {
-	checkInstall python-software-properties python-software-properties
+	installer python-software-properties python-software-properties
 }
 
 function hardenSysctl
 {
 	source www-ubuntu.conf
-	if [ hasHardenSysctlRun == false ]
+	if [ hasHardenSysctlRun ]
 	then
 		cat sysctl-append.conf >> /etc/sysctl.conf
 		sysctl -p
@@ -140,7 +140,7 @@ function ppaGit
 {
 	add-apt-repository ppa:git-core/ppa -y
 	apt-get update
-	checkInstall git git
+	installer git git
 }
 
 function baseSetup
@@ -151,7 +151,6 @@ function baseSetup
 	hardenSysctl
 	ppaSupport
 	baseInstaller
-	runUpdater
 }
 
 ############################################################
@@ -162,14 +161,14 @@ function baseSetup
 function installWWW
 {
 	source www-ubuntu.conf
-	if [ hasInstallWWW == true ]
+	if [ hasInstallWWW ]
 	then
 		die "installWWW has already been run, if run again conflicts will be created"
 	fi
 	# PHP
 	# https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-ubuntu-14-04
-	checkInstall php5-fpm php5-fpm
-	checkInstall php5-mysql php5-mysql
+	installer php5-fpm php5-fpm
+	installer php5-mysql php5-mysql
 	sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/' /etc/php5/fpm/php.ini
 	service php5-fpm restart
 
@@ -178,11 +177,11 @@ function installWWW
 	PAGESPEED="1.9.32.2"
 	PSOL="1.9.32.2"
 	WWWUSER="deploy"
-	checkInstall build-essential build-essential
-	checkInstall zlib1g-dev zlib1g-dev
-	checkInstall libpcre3 libpcre3
-	checkInstall libpcre3-dev libpcre3-dev
-	checkInstall libssl-dev libssl-dev
+	installer build-essential build-essential
+	installer zlib1g-dev zlib1g-dev
+	installer libpcre3 libpcre3
+	installer libpcre3-dev libpcre3-dev
+	installer libssl-dev libssl-dev
 	cd ~
 	wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${PAGESPEED}-beta.zip
 	unzip release-${PAGESPEED}-beta.zip
@@ -243,11 +242,11 @@ function installWWW
 # MariaDB
 function installMariadb
 {
-	checkInstall software-properties-common software-properties-common
+	installer software-properties-common software-properties-common
 	apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
 	add-apt-repository 'deb http://mirror.stshosting.co.uk/mariadb/repo/10.0/ubuntu trusty main'
 	apt-get update
-	checkInstall mariadb-server mariadb-server
+	installer mariadb-server mariadb-server
 	service mysql start
 	printInfo "Respond YES to all questions asked to secure your MariaDB install"
 	mysql_secure_installation
@@ -256,7 +255,7 @@ function installMariadb
 # UFW
 function installUfw
 {
-	checkInstall ufw ufw
+	installer ufw ufw
 	if [ -z "$1" ]
 	then
 		die "Usage: `basename $0` ufw [ssh-port-#]"
@@ -321,7 +320,7 @@ function runTests
 # locale
 function fixLocale
 {
-	checkInstall multipath-tools multipath-tools
+	installer multipath-tools multipath-tools
 	export LANGUAGE=en_US.UTF-8
 	export LANG=en_US.UTF-8
 	export LC_ALL=en_US.UTF-8
@@ -401,7 +400,7 @@ function osInfo
 
 # fail2ban
 function fail2banInstall {
-	checkInstall fail2ban fail2ban
+	installer fail2ban fail2ban
 	cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 	service fail2ban restart
 	printWarn "Fail2ban's config file is located in /etc/fail2ban/jail.local"
