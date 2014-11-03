@@ -130,6 +130,7 @@ function hardenSysctl
 	then
 		cat sysctl-append.conf >> /etc/sysctl.conf
 		sysctl -p
+		sed -i 's/hasHardenSysctlRun.*/hasHardenSysctlRun=true/' www-ubuntu.conf
 	else
 		printWarn "hardenSysctl has already been run on this system, function skipped."
 	fi
@@ -160,6 +161,11 @@ function baseSetup
 # Nginx/PHP
 function installWWW
 {
+	source www-ubuntu.conf
+	if [ hasInstallWWW == true ]
+	then
+		die "installWWW has already been run, if run again conflicts will be created"
+	fi
 	# PHP
 	# https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-ubuntu-14-04
 	checkInstall php5-fpm php5-fpm
@@ -168,7 +174,70 @@ function installWWW
 	service php5-fpm restart
 
 	# Nginx/Pagespeed from source
-
+	NGINX="1.6.2"
+	PAGESPEED="1.9.32.2"
+	PSOL="1.9.32.2"
+	WWWUSER="deploy"
+	checkInstall build-essential build-essential
+	checkInstall zlib1g-dev zlib1g-dev
+	checkInstall libpcre3 libpcre3
+	checkInstall libpcre3-dev libpcre3-dev
+	checkInstall libssl-dev libssl-dev
+	cd ~
+	wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${PAGESPEED}-beta.zip
+	unzip release-${PAGESPEED}-beta.zip
+	cd ngx_pagespeed-release-${PAGESPEED}-beta/
+	wget https://dl.google.com/dl/page-speed/psol/${PSOL}.tar.gz
+	tar -xzvf ${PSOL}.tar.gz  # extracts to psol/
+	cd ~
+	wget http://nginx.org/download/nginx-$NGINX.tar.gz # download nginx
+	tar -xvzf nginx-$NGINX.tar.gz # uncompress nginx
+	cd nginx-$NGINX/
+	# Below are nginx configure and make commands
+	# Things to note:
+	# 1. User and group is deploy not www-data
+	# 2. Installs needed SSL modules
+	# 3. Includes cool gzip stuff
+	./configure --sbin-path=/usr/local/sbin --conf-path=/etc/nginx/nginx.conf --user=$WWWUSER --group=$WWWUSER --lock-path=/var/lock/nginx.lock --pid-path=/var/run/nginx.pid --add-module=$HOME/ngx_pagespeed-release-$PAGESPEED-beta --with-http_spdy_module --with-http_ssl_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_realip_module
+	make
+	make install
+	# H5BP
+	mkdir ~/temp-h5bp
+	cd ~/temp-h5bp
+	git clone https://github.com/h5bp/server-configs-nginx.git .
+	cp -r ~/temp-h5bp/h5bp /etc/nginx/
+	# Load in my custom nginx.conf
+	rm /etc/nginx/nginx.conf
+	cp ~/www-ubuntu/www-conf/nginx.conf /etc/nginx/nginx.conf
+	# Load in my nginx init script
+	cp ~/www-ubuntu/nginx-conf/nginx-init /etc/init.d/nginx
+	chmod +x /etc/init.d/nginx
+	/usr/sbin/update-rc.d -f nginx defaults
+	# Load in h5bp/server-configs-nginx mime.types
+	rm /etc/nginx/mime.types
+	cp ~/temp-h5bp/mime.types /etc/nginx/mime.types
+	# Load in h5bp/server-configs-nginx sites-available example
+	cp -R ~/temp-h5bp/sites-available/ /etc/nginx/
+	# Make all the needed directories
+	mkdir /var/cache/nginx
+	mkdir /var/ngx_pagespeed_cache
+	mkdir /var/log/nginx
+	mkdir /var/log/pagespeed
+	# mkdir /etc/nginx/sites-available
+	mkdir /etc/nginx/sites-enabled
+	mkdir /sites
+	# permissions for newly created directories
+	chown -R $WWWUSER:$WWWUSER /var/cache/nginx
+	chown -R $WWWUSER:$WWWUSER /var/ngx_pagespeed_cache
+	chown -R $WWWUSER:$WWWUSER /var/log/nginx
+	chown -R $WWWUSER:$WWWUSER /var/log/pagespeed
+	chown -R $WWWUSER:$WWWUSER /etc/nginx/sites-available
+	chown -R $WWWUSER:$WWWUSER /etc/nginx/sites-enabled
+	chown -R $WWWUSER:$WWWUSER /sites
+	# finishing touches
+	rm -rf /usr/share/nginx/html # remove default website
+	service nginx restart # restarts nginx
+	sed -i 's/hasInstallWWWRun.*/hasInstallWWWRun=true/' www-ubuntu.conf
 }
 
 # MariaDB
@@ -190,8 +259,6 @@ function installUfw
 	checkInstall ufw ufw
 	if [ -z "$1" ]
 	then
-
-
 		die "Usage: `basename $0` ufw [ssh-port-#]"
 	fi
 	# Reconfigure sshd - change port
@@ -283,20 +350,20 @@ function hardenSsh
 	fi
 	if [ "$1" == 1 ] # All users including root can only login via SSH-keys.
 	then
-		sed -i 's/PermitRootLogin.*/PermitRootLogin without-password/' /etc/ssh/sshd_config
-		sed -i 's/#PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+		sed -i 's/.PermitRootLogin.*/PermitRootLogin without-password/' /etc/ssh/sshd_config
+		sed -i 's/.PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
 	elif [ "$1" == 2 ] # Normal users can login via SSH-keys, root can't login at all.
 	then
-		sed -i 's/PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
-		sed -i 's/#PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+		sed -i 's/.PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+		sed -i 's/.PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
 	elif [ "$1" == 3 ] # Root can't login, normal users can use SSH-keys or plain passwords.
 	then
-		sed -i 's/PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
-		sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+		sed -i 's/.PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+		sed -i 's/.PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
 	elif [ "$1" == 4 ] # Normal users can login with SSH-keys or plain passwords, root can only login via SSH-keys.
 	then
-		sed -i 's/PermitRootLogin.*/PermitRootLogin without-password/' /etc/ssh/sshd_config
-		sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+		sed -i 's/.PermitRootLogin.*/PermitRootLogin without-password/' /etc/ssh/sshd_config
+		sed -i 's/.PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
 	else
 		die "Usage: `basename $0` harden_ssh [option #]"
 	fi
