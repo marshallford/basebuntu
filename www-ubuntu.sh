@@ -109,7 +109,7 @@ function removeUneededPackages
 {
 	# Apache
 	service apache2 stop
-	apt-get remove apache2*
+	apt-get remove apache2* -y
 	apt-get autoremove -y
 }
 
