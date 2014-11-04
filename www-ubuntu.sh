@@ -121,6 +121,7 @@ function setTimezone
 function ppaSupport
 {
 	installer add-apt-repository python-software-properties
+	installer software-properties-common software-properties-common
 }
 
 function hardenSysctl
@@ -166,6 +167,8 @@ function installWWW
 	then
 		die "installWWW has already been run, if run again conflicts will be created"
 	fi
+	# Create user
+	adduser deploy
 	# PHP
 	# https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-ubuntu-14-04
 	installer php5-fpm php5-fpm
@@ -210,7 +213,7 @@ function installWWW
 	rm /etc/nginx/nginx.conf
 	cp ~/www-ubuntu/www-conf/nginx.conf /etc/nginx/nginx.conf
 	# Load in my nginx init script
-	cp ~/www-ubuntu/nginx-conf/nginx-init /etc/init.d/nginx
+	cp ~/www-ubuntu/www-conf/nginx-init /etc/init.d/nginx
 	chmod +x /etc/init.d/nginx
 	/usr/sbin/update-rc.d -f nginx defaults
 	# Load in h5bp/server-configs-nginx mime.types
@@ -237,13 +240,13 @@ function installWWW
 	# finishing touches
 	rm -rf /usr/share/nginx/html # remove default website
 	service nginx restart # restarts nginx
+	cd ~/www-ubuntu
 	sed -i 's/hasInstallWWWRun.*/hasInstallWWWRun=true/' www-ubuntu.conf
 }
 
 # MariaDB
 function installMariadb
 {
-	installer software-properties-common software-properties-common
 	apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
 	add-apt-repository 'deb http://mirror.stshosting.co.uk/mariadb/repo/10.0/ubuntu trusty main'
 	apt-get update
