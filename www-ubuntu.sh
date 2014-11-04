@@ -120,16 +120,16 @@ function setTimezone
 
 function ppaSupport
 {
-	installer python-software-properties python-software-properties
+	installer add-apt-repository python-software-properties
 }
 
 function hardenSysctl
 {
 	source www-ubuntu.conf
-	if [ hasHardenSysctlRun ]
+	if [ "$hasHardenSysctlRun" = false ]
 	then
 		cat sysctl-append.conf >> /etc/sysctl.conf
-		sysctl -p
+		sysctl -p > /dev/null
 		sed -i 's/hasHardenSysctlRun.*/hasHardenSysctlRun=true/' www-ubuntu.conf
 	else
 		printWarn "hardenSysctl has already been run on this system, function skipped."
@@ -162,7 +162,7 @@ function baseSetup
 function installWWW
 {
 	source www-ubuntu.conf
-	if [ hasInstallWWW ]
+	if [ "$hasInstallWWW" = true ]
 	then
 		die "installWWW has already been run, if run again conflicts will be created"
 	fi
