@@ -145,6 +145,18 @@ function ppaGit
 	printInfo "git was upgraded to the ppa verison"
 }
 
+function scriptAlias
+{
+	source www-ubuntu.conf
+	if [ "$hasAnAliasBeenAdded" = false ]
+	then
+		echo "alias www-ubuntu='/root/www-ubuntu/www-ubuntu.sh'" >> /root/.bashrc
+		source /root/.bashrc
+		cd ~/www-ubuntu
+		sed -i 's/hasAnAliasBeenAdded.*/hasAnAliasBeenAdded=true/' www-ubuntu.conf
+	fi
+}
+
 function baseSetup
 {
 	setTimezone
@@ -153,6 +165,8 @@ function baseSetup
 	hardenSysctl
 	ppaSupport
 	baseInstaller
+	runCleaner
+	scriptAlias
 }
 
 ############################################################
@@ -237,6 +251,9 @@ function installWWW
 	chown -R $WWWUSER:$WWWUSER /etc/nginx/sites-available
 	chown -R $WWWUSER:$WWWUSER /etc/nginx/sites-enabled
 	chown -R $WWWUSER:$WWWUSER /sites
+	# clean up
+	cd ~
+	rm -rf release-${PAGESPEED}-beta.zip nginx-$NGINX.tar.gz nginx-$NGINX ngx_pagespeed-release-${PAGESPEED}-beta temp-h5bp
 	# finishing touches
 	rm -rf /usr/share/nginx/html # remove default website
 	service nginx restart # restarts nginx
@@ -287,10 +304,10 @@ function wwwPermissions
 	if [ -z "$1" ]
 	then
 		chown -R deploy:deploy /sites
-		print_info "User deploy is now the owner of the www directory"
+		printInfo "User deploy is now the owner of the www directory"
 	else
 		chown -R $1:$1 /sites
-		print_info "User $1 is now the owner of the www directory"
+		printInfo "User $1 is now the owner of the www directory"
 	fi
 }
 
@@ -303,10 +320,15 @@ function runUpdater
 		apt-get -q -y upgrade
 		apt-get -q -y dist-upgrade
 		# clean up
-		apt-get -q -y autoremove
-		apt-get -q -y autoclean
-		apt-get -q -y clean
+		runCleaner
 	done
+}
+
+function runCleaner
+{
+	apt-get -q -y autoremove
+	apt-get -q -y autoclean
+	apt-get -q -y clean
 }
 
 # test
