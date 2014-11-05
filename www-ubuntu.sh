@@ -186,6 +186,7 @@ function installWWW
 	# https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-ubuntu-14-04
 	installer php5-fpm php5-fpm
 	installer php5-mysql php5-mysql
+	installer php-apc php-apc
 	sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/' /etc/php5/fpm/php.ini
 	service php5-fpm restart
 
