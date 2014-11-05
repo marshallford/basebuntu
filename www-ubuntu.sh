@@ -276,11 +276,11 @@ function installMariadb
 # UFW
 function installUfw
 {
-	installer ufw ufw
 	if [ -z "$1" ]
 	then
-		die "Usage: `basename $0` ufw [ssh-port-#]"
+		die "Usage: `basename $0` firewall [ssh-port-#]"
 	fi
+	installer ufw ufw
 	# Reconfigure sshd - change port
 	sed -i 's/^Port [0-9]*/Port '$1'/' /etc/ssh/sshd_config
     service ssh restart
@@ -291,7 +291,9 @@ function installUfw
 	ufw allow http
 	ufw allow https
 	ufw allow $1
-	ufw enable
+	ufw --force enable
+	printInfo "UFW Status"
+	ufw status
 }
 
 ############################################################
@@ -371,7 +373,7 @@ function hardenSsh
 {
 	if [ -z "$1" ]
 	then
-		die "Usage: `basename $0` harden_ssh [option #]"
+		die "Usage: `basename $0` harden-ssh [option #]"
 	fi
 	if [ "$1" == 1 ] # All users including root can only login via SSH-keys.
 	then
@@ -390,7 +392,7 @@ function hardenSsh
 		sed -i 's/.PermitRootLogin.*/PermitRootLogin without-password/' /etc/ssh/sshd_config
 		sed -i 's/.PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
 	else
-		die "Usage: `basename $0` harden_ssh [option #]"
+		die "Usage: `basename $0` harden-ssh [option #]"
 	fi
 	service ssh restart
 	printInfo "SSH hardening sucessful"
@@ -431,6 +433,21 @@ function fail2banInstall {
 	service fail2ban restart
 	printWarn "Fail2ban's config file is located in /etc/fail2ban/jail.local"
 
+}
+
+# nginx commands
+function addSite
+{
+	if [ -z "$1" ]
+	then
+		die "Usage: `basename $0` add-site [website name]"
+	fi
+	cd /sites
+	mkdir -p $1/public
+	wwwPermissions
+	cd /etc/nginx/sites-available
+	touch $1.conf
+	cd ~
 }
 
 ########################################################################
@@ -479,6 +496,9 @@ locale)
 	;;
 test)
 	runTests
+	;;
+add-site)
+	addSite $2
 	;;
 *)
 	osInfo
