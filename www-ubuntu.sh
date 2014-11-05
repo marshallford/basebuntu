@@ -191,10 +191,10 @@ function installWWW
 	installer php5-fpm php5-fpm
 	installer php5-mysql php5-mysql
 	installer php-apc php-apc
-	sed -i 's/user = www-data/user = $WWWUSER/' /etc/php5/fpm/pool.d/www.conf
-	sed -i 's/group = www-data/group = $WWWUSER/' /etc/php5/fpm/pool.d/www.conf
-	sed -i 's/listen.owner = www-data/listen.owner = $WWWUSER/' /etc/php5/fpm/pool.d/www.conf
-	sed -i 's/listen.group = www-data/listen.group = $WWWUSER/' /etc/php5/fpm/pool.d/www.conf
+	sed -i "s/user = www-data/user = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
+	sed -i "s/group = www-data/group = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
+	sed -i "s/listen.owner = www-data/listen.owner = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
+	sed -i "s/listen.group = www-data/listen.group = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
 	chown $WWWUSER:$WWWUSER /var/run/php5-fpm.sock
 	service php5-fpm restart
 
