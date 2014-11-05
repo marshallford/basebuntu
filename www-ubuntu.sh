@@ -180,6 +180,10 @@ function installWWW
 	then
 		die "installWWW has already been run, if run again conflicts will be created"
 	fi
+	NGINX="1.6.2"
+	PAGESPEED="1.9.32.2"
+	PSOL="1.9.32.2"
+	WWWUSER="deploy"
 	# Create user
 	adduser deploy
 	# PHP
@@ -187,14 +191,14 @@ function installWWW
 	installer php5-fpm php5-fpm
 	installer php5-mysql php5-mysql
 	installer php-apc php-apc
-	sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/' /etc/php5/fpm/php.ini
+	sed -i 's/user = www-data/user = $WWWUSER/' /etc/php5/fpm/pool.d/www.conf
+	sed -i 's/group = www-data/group = $WWWUSER/' /etc/php5/fpm/pool.d/www.conf
+	sed -i 's/listen.owner = www-data/listen.owner = $WWWUSER/' /etc/php5/fpm/pool.d/www.conf
+	sed -i 's/listen.group = www-data/listen.group = $WWWUSER/' /etc/php5/fpm/pool.d/www.conf
+	chown $WWWUSER:$WWWUSER /var/run/php5-fpm.sock
 	service php5-fpm restart
 
 	# Nginx/Pagespeed from source
-	NGINX="1.6.2"
-	PAGESPEED="1.9.32.2"
-	PSOL="1.9.32.2"
-	WWWUSER="deploy"
 	installer build-essential build-essential
 	installer zlib1g-dev zlib1g-dev
 	installer libpcre3 libpcre3
