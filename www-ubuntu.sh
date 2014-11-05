@@ -120,7 +120,7 @@ function setTimezone
 
 function ppaSupport
 {
-	installer add-apt-repository python-software-properties
+	installer python-software-properties python-software-properties
 	installer software-properties-common software-properties-common
 }
 
