@@ -151,7 +151,6 @@ function scriptAlias
 	if [ "$hasAnAliasBeenAdded" = false ]
 	then
 		echo "alias www-ubuntu='/root/www-ubuntu/www-ubuntu.sh'" >> /root/.bashrc
-		source /root/.bashrc
 		cd ~/www-ubuntu
 		sed -i 's/hasAnAliasBeenAdded.*/hasAnAliasBeenAdded=true/' www-ubuntu.conf
 	fi
