@@ -126,7 +126,7 @@ function ppaSupport
 
 function hardenSysctl
 {
-	source www-ubuntu.conf
+	source ~/www-ubuntu/www-ubuntu.conf
 	if [ "$hasHardenSysctlRun" = false ]
 	then
 		cat sysctl-append.conf >> /etc/sysctl.conf
@@ -147,7 +147,7 @@ function ppaGit
 
 function scriptAlias
 {
-	source www-ubuntu.conf
+	source ~/www-ubuntu/www-ubuntu.conf
 	if [ "$hasAnAliasBeenAdded" = false ]
 	then
 		echo "alias www-ubuntu='/root/www-ubuntu/www-ubuntu.sh'" >> /root/.bashrc
@@ -175,7 +175,7 @@ function baseSetup
 # Nginx/PHP
 function installWWW
 {
-	source www-ubuntu.conf
+	source ~/www-ubuntu/www-ubuntu.conf
 	if [ "$hasInstallWWW" = true ]
 	then
 		die "installWWW has already been run, if run again conflicts will be created"
