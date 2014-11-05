@@ -21,7 +21,7 @@ Remove excess packages and install the basic components needed for a light-weigh
 	cd ~/www-ubuntu; chmod +x www-ubuntu.sh; ./www-ubuntu.sh
 
 	./www-ubuntu.sh setup
-	./www-ubuntu.sh firewall [port]
+	./www-ubuntu.sh ufw [port]
 	./www-ubuntu.sh www
 	./www-ubuntu.sh mariadb
 

@@ -459,7 +459,7 @@ case "$1" in
 setup)
 	baseSetup
 	;;
-firewall)
+ufw)
 	installUfw $2
 	;;
 www)
