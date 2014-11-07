@@ -461,7 +461,7 @@ function removeSite
 	then
 		die "Usage: `basename $0` remove-site [website name]"
 	fi
-	cd ~/sites
+	cd /sites
 	rm -rf $1
 	cd ~
 	rm /etc/nginx/sites-available/$1.conf
@@ -479,7 +479,7 @@ function enableSite
 	if [ -L /etc/nginx/sites-enabled/$1.conf ]
 	then
 		printWarn "$1 already enabled"
-	elif [ ! -a /etc/nginx/sites-available/$1.conf ]
+	elif [ ! -f /etc/nginx/sites-available/$1.conf ]
 	then
 		printWarn "A config for $1 does not exsist. Please use the add-site command"
 	else
@@ -495,10 +495,13 @@ function disableSite
 	then
 		die "Usage: `basename $0` disable-site [website name]"
 	fi
-	if [ -L /etc/nginx/sites-enabled/$1.conf ]
+	if [ ! -f /etc/nginx/sites-available/$1.conf ]
+	then
+		printWarn "A config for $1 does not exsist. Please use the add-site command"
+	elif [ ! -L /etc/nginx/sites-enabled/$1.conf ]
 	then
 		printWarn "$1 is not enabled"
-	elif
+	else
 		rm /etc/nginx/sites-enabled/$1.conf
 		service nginx restart
 		printInfo "$1 was disabled successfully"
