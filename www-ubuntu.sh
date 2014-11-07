@@ -452,6 +452,57 @@ function addSite
 	cd /etc/nginx/sites-available
 	touch $1.conf
 	cd ~
+	printInfo "$1 was added successfully"
+}
+
+function removeSite
+{
+	if [ -z "$1" ]
+	then
+		die "Usage: `basename $0` remove-site [website name]"
+	fi
+	cd ~/sites
+	rm -rf $1
+	cd ~
+	rm /etc/nginx/sites-available/$1.conf
+	rm /etc/nginx/sites-enabled/$1.conf
+	service nginx restart
+	printInfo "$1 was removed successfully"
+}
+
+function enableSite
+{
+	if [ -z "$1" ]
+	then
+		die "Usage: `basename $0` enable-site [website name]"
+	fi
+	if [ -L /etc/nginx/sites-enabled/$1.conf ]
+	then
+		printWarn "$1 already enabled"
+	elif [ ! -a /etc/nginx/sites-available/$1.conf ]
+	then
+		printWarn "A config for $1 does not exsist. Please use the add-site command"
+	else
+		ln -s /etc/nginx/sites-available/$1.conf /etc/nginx/sites-enabled/$1.conf
+		service nginx restart
+		printInfo "$1 was enabled successfully"
+	fi
+}
+
+function disableSite
+{
+	if [ -z "$1" ]
+	then
+		die "Usage: `basename $0` disable-site [website name]"
+	fi
+	if [ -L /etc/nginx/sites-enabled/$1.conf ]
+	then
+		printWarn "$1 is not enabled"
+	elif
+		rm /etc/nginx/sites-enabled/$1.conf
+		service nginx restart
+		printInfo "$1 was disabled successfully"
+	fi
 }
 
 ########################################################################
@@ -503,6 +554,15 @@ test)
 	;;
 add-site)
 	addSite $2
+	;;
+remove-site)
+	removeSite $2
+	;;
+enable-site)
+	enableSite $2
+	;;
+disable-site)
+	disableSite $2
 	;;
 *)
 	osInfo
