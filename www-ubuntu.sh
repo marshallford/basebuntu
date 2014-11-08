@@ -151,9 +151,22 @@ function scriptAlias
 	if [ "$hasAnAliasBeenAdded" = false ]
 	then
 		echo "alias www-ubuntu='/root/www-ubuntu/www-ubuntu.sh'" >> /root/.bashrc
+		echo "alias wwwu='/root/www-ubuntu/www-ubuntu.sh'" >> /root/.bashrc
 		cd ~/www-ubuntu
 		sed -i 's/hasAnAliasBeenAdded.*/hasAnAliasBeenAdded=true/' www-ubuntu.conf
 	fi
+}
+
+function updateWwwUbuntu
+{
+	cp ~/www-ubuntu/www-ubuntu.conf ~/www-ubuntu.conf.tmp
+	cd ~/www-ubuntu
+	git reset --hard HEAD
+	git pull
+	chmod +x www-ubuntu.sh
+	rm www-ubuntu.conf
+	mv ~/www-ubuntu.conf.tmp ~/www-ubuntu/www-ubuntu.conf
+	printInfo "Updated www-ubuntu successfully"
 }
 
 function baseSetup
@@ -282,7 +295,7 @@ function installUfw
 {
 	if [ -z "$1" ]
 	then
-		die "Usage: `basename $0` firewall [ssh-port-#]"
+		die "Usage: `basename $0` firewall [ssh port]"
 	fi
 	installer ufw ufw
 	# Reconfigure sshd - change port
@@ -303,19 +316,6 @@ function installUfw
 ############################################################
 # Commands
 ############################################################
-
-# permissions
-function wwwPermissions
-{
-	if [ -z "$1" ]
-	then
-		chown -R deploy:deploy /sites
-		printInfo "User deploy is now the owner of the www directory"
-	else
-		chown -R $1:$1 /sites
-		printInfo "User $1 is now the owner of the www directory"
-	fi
-}
 
 # updater
 function runUpdater
@@ -402,13 +402,6 @@ function hardenSsh
 	printInfo "SSH hardening sucessful"
 }
 
-# www-restart
-function wwwRestart
-{
-	service php5-fpm restart
-	service nginx restart
-}
-
 # info
 function osInfo
 {
@@ -439,7 +432,10 @@ function fail2banInstall {
 
 }
 
-# nginx commands
+############################################################
+# Nginx/Web Server commands
+############################################################
+
 function addSite
 {
 	if [ -z "$1" ]
@@ -508,6 +504,39 @@ function disableSite
 	fi
 }
 
+function editSite
+{
+	if [ -z "$1" ]
+	then
+		die "Usage: `basename $0` edit-site [website name]"
+	fi
+	if [ ! -f /etc/nginx/sites-available/$1.conf ]
+	then
+		printWarn "A config for $1 does not exsist. Please use the add-site command"
+	fi
+	nano /etc/nginx/sites-available/$1.conf
+}
+
+# www-restart
+function wwwRestart
+{
+	service php5-fpm restart
+	service nginx restart
+}
+
+# permissions
+function wwwPermissions
+{
+	if [ -z "$1" ]
+	then
+		chown -R deploy:deploy /sites
+		printInfo "User deploy is now the owner of the www directory"
+	else
+		chown -R $1:$1 /sites
+		printInfo "User $1 is now the owner of the www directory"
+	fi
+}
+
 ########################################################################
 # Start of script
 ########################################################################
@@ -528,13 +557,16 @@ mariadb)
 	installMariadb
 	;;
 # other options/custom commands
+update-www-ubuntu)
+	updateWwwUbuntu
+	;;
 harden-ssh)
 	hardenSsh $2
 	;;
-www-permissions)
+permissions)
 	wwwPermissions $2
 	;;
-www-restart)
+restart)
 	wwwRestart
 	;;
 fail2ban)
@@ -567,6 +599,9 @@ enable-site)
 disable-site)
 	disableSite $2
 	;;
+edit-site)
+	editSite $2
+	;;
 *)
 	osInfo
 	echo '  '
@@ -574,13 +609,11 @@ disable-site)
 	echo '  '
 	echo 'Main options (in recomended order):'
 	echo '  - setup                  (Remove unneeded, upgrade system, install software)'
-	echo '  - ufw [port]             (Setup basic firewall with HTTP(S) and SSH open)'
+	echo '  - ufw [ssh port]         (Setup basic firewall with HTTP(S) and SSH open)'
 	echo '  - www                    (Install Ngnix, PHP, and Pagespeed)'
 	echo '  - mariadb                (Install MySQL alternative and set root password)'
 	echo '  '
 	echo 'Extra options and custom commands:'
-	echo '  - www-permissions        (Make sure the proper permissions are set for /var/www/)'
-	echo '  - www-restart            (Restarts Ngnix and PHP)'
 	echo '  - harden-ssh [option #]  (Hardens openSSH with PermitRoot and PasswordAuthentication)'
 	echo '  - fail2ban               (Installs fail2ban and creates a config file)'
 	echo '  - info                   (Displays information about the OS, ARCH and VERSION)'
@@ -588,6 +621,15 @@ disable-site)
 	echo '  - updater                (Updates/upgrades packages, no release upgrades)'
 	echo '  - locale                 (Fix locales issue with OpenVZ Ubuntu templates)'
 	echo '  - test                   (Run the classic disk IO and classic cachefly network test)'
+	echo '  '
+	echo 'Nginx website commands:'
+	echo '  - restart                (Restarts Ngnix and PHP-FPM)'
+	echo '  - permissions            (Make sure the proper permissions are set for /var/www/)'
+	echo '  - add-site               (Creates folder structure and empty config)'
+	echo '  - remove-site            (Deletes folder structure and config)'
+	echo '  - enable-site            (Creates symlink to sites-enabled)'
+	echo '  - disable-site           (Deletes symlink to sites-enabled)'
+	echo '  - edit-site              (Opens website config in nano)'
 	echo '  '
 	;;
 esac
