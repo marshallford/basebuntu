@@ -517,6 +517,12 @@ function editSite
 	nano /etc/nginx/sites-available/$1.conf
 }
 
+function editNginxConfig
+{
+	cd /etc/nginx
+	nano /etc/nginx/nginx.conf
+}
+
 # www-restart
 function wwwRestart
 {
@@ -602,34 +608,38 @@ disable-site)
 edit-site)
 	editSite $2
 	;;
+nginx-config)
+	editNginxConfig
+	;;
 *)
 	osInfo
 	echo '  '
 	echo 'Usage:' `basename $0` '[option] [argument]'
 	echo '  '
 	echo 'Main options (in recomended order):'
-	echo '  - setup                  (Remove unneeded, upgrade system, install software)'
-	echo '  - ufw [ssh port]         (Setup basic firewall with HTTP(S) and SSH open)'
-	echo '  - www                    (Install Ngnix, PHP, and Pagespeed)'
-	echo '  - mariadb                (Install MySQL alternative and set root password)'
+	echo '  - setup                   (Remove unneeded, upgrade system, install software)'
+	echo '  - ufw [ssh port]          (Setup basic firewall with HTTP(S) and SSH open)'
+	echo '  - www                     (Install Ngnix, PHP, and Pagespeed)'
+	echo '  - mariadb                 (Install MySQL alternative and set root password)'
 	echo '  '
 	echo 'Extra options and custom commands:'
-	echo '  - harden-ssh [option #]  (Hardens openSSH with PermitRoot and PasswordAuthentication)'
-	echo '  - fail2ban               (Installs fail2ban and creates a config file)'
-	echo '  - info                   (Displays information about the OS, ARCH and VERSION)'
-	echo '  - ip                     (Displays the external IP address of the server)'
-	echo '  - updater                (Updates/upgrades packages, no release upgrades)'
-	echo '  - locale                 (Fix locales issue with OpenVZ Ubuntu templates)'
-	echo '  - test                   (Run the classic disk IO and classic cachefly network test)'
+	echo '  - harden-ssh [option #]   (Hardens openSSH with PermitRoot and PasswordAuthentication)'
+	echo '  - fail2ban                (Installs fail2ban and creates a config file)'
+	echo '  - info                    (Displays information about the OS, ARCH and VERSION)'
+	echo '  - ip                      (Displays the external IP address of the server)'
+	echo '  - updater                 (Updates/upgrades packages, no release upgrades)'
+	echo '  - locale                  (Fix locales issue with OpenVZ Ubuntu templates)'
+	echo '  - test                    (Run the classic disk IO and classic cachefly network test)'
 	echo '  '
 	echo 'Nginx website commands:'
-	echo '  - restart                (Restarts Ngnix and PHP-FPM)'
-	echo '  - permissions            (Make sure the proper permissions are set for /var/www/)'
-	echo '  - add-site               (Creates folder structure and empty config)'
-	echo '  - remove-site            (Deletes folder structure and config)'
-	echo '  - enable-site            (Creates symlink to sites-enabled)'
-	echo '  - disable-site           (Deletes symlink to sites-enabled)'
-	echo '  - edit-site              (Opens website config in nano)'
+	echo '  - restart                 (Restarts Ngnix and PHP-FPM)'
+	echo '  - permissions             (Make sure the proper permissions are set for /var/www/)'
+	echo '  - add-site [website]      (Creates folder structure and empty config)'
+	echo '  - remove-site [website]   (Deletes folder structure and config)'
+	echo '  - enable-site [website]   (Creates symlink to sites-enabled)'
+	echo '  - disable-site [website]  (Deletes symlink to sites-enabled)'
+	echo '  - edit-site [website]     (Opens website config in nano)'
+	echo '  - nginx-config            (Opens Nginx config in nano)'
 	echo '  '
 	;;
 esac
