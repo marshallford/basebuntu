@@ -15,16 +15,16 @@ Remove excess packages and install the basic components needed for a light-weigh
  - Custom Nginx commands for working with website configs
  - And more!
 
- ## Install
+## Install
 
- Warning! This script will overwrite previous configs during re-installation. While I have included some checks to prevent overwriting, be aware that things may break if you run a main option command more than once on a box.
+Warning! This script will overwrite previous configs during re-installation. While I have included some checks to prevent overwriting, be aware that things may break if you run a main option command more than once on a box.
 
 	apt-get update; apt-get install git -y; git clone https://github.com/marshallford/www-ubuntu
 	cd ~/www-ubuntu; chmod +x www-ubuntu.sh
 
 ## Main options
 
-** Note: You must run setup before any other command. Setup installs/configures a base install. **
+**Note: You must run setup before any other command. Setup installs/configures a base install.**
 
 	./www-ubuntu.sh setup
 	./www-ubuntu.sh ufw [ssh port]
