@@ -69,6 +69,12 @@ Runs a full update and upgrade of packages and then cleans up. This command will
 
 	./www-ubuntu.sh updater
 
+##### www-ubuntu Updater
+
+Updates www-ubuntu script and keeps current config file.
+
+	./www-ubuntu.sh update-wwwu
+
 ##### Fixing locale on some OpenVZ Ubuntu templates
 
 	./www-ubuntu.sh locale

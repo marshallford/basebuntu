@@ -563,7 +563,7 @@ mariadb)
 	installMariadb
 	;;
 # other options/custom commands
-update-www-ubuntu)
+update-wwwu)
 	updateWwwUbuntu
 	;;
 harden-ssh)
@@ -628,6 +628,7 @@ nginx-config)
 	echo '  - info                    (Displays information about the OS, ARCH and VERSION)'
 	echo '  - ip                      (Displays the external IP address of the server)'
 	echo '  - updater                 (Updates/upgrades packages, no release upgrades)'
+	echo '  - update-wwwu             (Updates www-ubuntu and keeps current config file)'
 	echo '  - locale                  (Fix locales issue with OpenVZ Ubuntu templates)'
 	echo '  - test                    (Run the classic disk IO and classic cachefly network test)'
 	echo '  '
