@@ -509,12 +509,12 @@ function editSite
 	if [ -z "$1" ]
 	then
 		die "Usage: `basename $0` edit-site [website name]"
-	fi
-	if [ ! -f /etc/nginx/sites-available/$1.conf ]
+	elif [ ! -f /etc/nginx/sites-available/$1.conf ]
 	then
-		printWarn "A config for $1 does not exsist. Please use the add-site command"
+		die "A config for $1 does not exsist. Please use the add-site command"
+	else
+		nano /etc/nginx/sites-available/$1.conf
 	fi
-	nano /etc/nginx/sites-available/$1.conf
 }
 
 function editNginxConfig
