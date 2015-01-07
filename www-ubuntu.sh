@@ -447,8 +447,8 @@ function addSite
 	cd /sites
 	mkdir -p $1/public
 	wwwPermissions
-	cp /etc/nginx/sites-available/example.com /etc/nginx/sites-available/$1 # use example site
-	sed -i "s/example.com/$1/g" "/etc/nginx/sites-available/$1" # change example.com to domain name
+	cp /etc/nginx/sites-available/example.com /etc/nginx/sites-available/$1.conf # use example site
+	sed -i "s/example.com/$1/g" "/etc/nginx/sites-available/$1.conf" # change example.com to domain name
 	cd ~
 	printInfo "$1 was added successfully"
 }
