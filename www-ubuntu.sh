@@ -240,13 +240,15 @@ function installWWW
 	cd ~/temp-h5bp
 	git clone https://github.com/h5bp/server-configs-nginx.git .
 	cp -r ~/temp-h5bp/h5bp /etc/nginx/
-	# Load in my custom nginx.conf
+	# Load in custom nginx.conf
 	rm /etc/nginx/nginx.conf
 	cp ~/www-ubuntu/www-conf/nginx.conf /etc/nginx/nginx.conf
-	# Load in my nginx init script
+	# Load in nginx init script
 	cp ~/www-ubuntu/www-conf/nginx-init /etc/init.d/nginx
 	chmod +x /etc/init.d/nginx
 	/usr/sbin/update-rc.d -f nginx defaults
+	# Load in custom pagespeed conf
+	cp ~/www-ubuntu/www-conf/pagespeed.conf /etc/nginx/pagespeed.conf
 	# Load in h5bp/server-configs-nginx mime.types
 	rm /etc/nginx/mime.types
 	cp ~/temp-h5bp/mime.types /etc/nginx/mime.types
@@ -445,8 +447,8 @@ function addSite
 	cd /sites
 	mkdir -p $1/public
 	wwwPermissions
-	cd /etc/nginx/sites-available
-	touch $1.conf
+	cp ~/temp-h5bp/sites-available/example.com /etc/nginx/sites-available/$1 # use example site
+	sed -i "s/example.com/$1/g" "/etc/nginx/sites-available/$1" # change example.com to domain name
 	cd ~
 	printInfo "$1 was added successfully"
 }

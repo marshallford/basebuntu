@@ -141,9 +141,10 @@ Opens Nginx config in nano.
 
 ## After installation
 
-- Use `ufw status` to get information on your firewall status.
+- Use `ufw status` to get information on your firewall status
 - Run `htop` to see RAM and CPU usage
-- Reboot to test that everything is working ok after a boot cycle.
+- Reboot to test that everything is working ok after a boot cycle
+- To enable Pagespeed on a virtualhost, include `/etc/ngnix/pagespeed.conf`
 
 ## Credits
 
