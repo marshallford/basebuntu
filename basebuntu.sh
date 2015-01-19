@@ -1,4 +1,7 @@
 #!/bin/bash
+# Project URL: https://github.com/marshallford/basebuntu
+# Author: Marshall Ford
+
 currentUbuntuVersionSupported="14.04"
 
 ############################################################
@@ -126,12 +129,12 @@ function ppaSupport
 
 function hardenSysctl
 {
-	source ~/www-ubuntu/www-ubuntu.conf
+	source ~/basebuntu/basebuntu.conf
 	if [ "$hasHardenSysctlRun" = false ]
 	then
 		cat sysctl-append.conf >> /etc/sysctl.conf
 		sysctl -p > /dev/null
-		sed -i 's/hasHardenSysctlRun.*/hasHardenSysctlRun=true/' www-ubuntu.conf
+		sed -i 's/hasHardenSysctlRun.*/hasHardenSysctlRun=true/' basebuntu.conf
 	else
 		printWarn "hardenSysctl has already been run on this system, function skipped."
 	fi
@@ -141,32 +144,32 @@ function ppaGit
 {
 	add-apt-repository ppa:git-core/ppa -y
 	apt-get update
-	apt-get upgrade -y # git was installed to pull in www-ubuntu
+	apt-get upgrade -y # git was installed to pull in basebuntu
 	printInfo "git was upgraded to the ppa verison"
 }
 
 function scriptAlias
 {
-	source ~/www-ubuntu/www-ubuntu.conf
+	source ~/basebuntu/basebuntu.conf
 	if [ "$hasAnAliasBeenAdded" = false ]
 	then
-		echo "alias www-ubuntu='/root/www-ubuntu/www-ubuntu.sh'" >> /root/.bashrc
-		echo "alias wwwu='/root/www-ubuntu/www-ubuntu.sh'" >> /root/.bashrc
-		cd ~/www-ubuntu
-		sed -i 's/hasAnAliasBeenAdded.*/hasAnAliasBeenAdded=true/' www-ubuntu.conf
+		echo "alias basebuntu='/root/basebuntu/basebuntu.sh'" >> /root/.bashrc
+		echo "alias bb='/root/basebuntu/basebuntu.sh'" >> /root/.bashrc
+		cd ~/basebuntu
+		sed -i 's/hasAnAliasBeenAdded.*/hasAnAliasBeenAdded=true/' basebuntu.conf
 	fi
 }
 
-function updateWwwUbuntu
+function updateBasebuntu
 {
-	cp ~/www-ubuntu/www-ubuntu.conf ~/www-ubuntu.conf.tmp
-	cd ~/www-ubuntu
+	cp ~/basebuntu/basebuntu.conf ~/basebuntu.conf.tmp
+	cd ~/basebuntu
 	git reset --hard HEAD
 	git pull
-	chmod +x www-ubuntu.sh
-	rm www-ubuntu.conf
-	mv ~/www-ubuntu.conf.tmp ~/www-ubuntu/www-ubuntu.conf
-	printInfo "Updated www-ubuntu successfully"
+	chmod +x basebuntu.sh
+	rm basebuntu.conf
+	mv ~/basebuntu.conf.tmp ~/basebuntu/basebuntu.conf
+	printInfo "Updated basebuntu successfully"
 }
 
 function baseSetup
@@ -188,7 +191,7 @@ function baseSetup
 # Nginx/PHP
 function installWWW
 {
-	source ~/www-ubuntu/www-ubuntu.conf
+	source ~/basebuntu/basebuntu.conf
 	if [ "$hasInstallWWW" = true ]
 	then
 		die "installWWW has already been run, if run again conflicts will be created"
@@ -242,13 +245,13 @@ function installWWW
 	cp -r ~/temp-h5bp/h5bp /etc/nginx/
 	# Load in custom nginx.conf
 	rm /etc/nginx/nginx.conf
-	cp ~/www-ubuntu/www-conf/nginx.conf /etc/nginx/nginx.conf
+	cp ~/basebuntu/www-conf/nginx.conf /etc/nginx/nginx.conf
 	# Load in nginx init script
-	cp ~/www-ubuntu/www-conf/nginx-init /etc/init.d/nginx
+	cp ~/basebuntu/www-conf/nginx-init /etc/init.d/nginx
 	chmod +x /etc/init.d/nginx
 	/usr/sbin/update-rc.d -f nginx defaults
 	# Load in custom pagespeed conf
-	cp ~/www-ubuntu/www-conf/pagespeed.conf /etc/nginx/pagespeed.conf
+	cp ~/basebuntu/www-conf/pagespeed.conf /etc/nginx/pagespeed.conf
 	# Load in h5bp/server-configs-nginx mime.types
 	rm /etc/nginx/mime.types
 	cp ~/temp-h5bp/mime.types /etc/nginx/mime.types
@@ -276,8 +279,8 @@ function installWWW
 	# finishing touches
 	rm -rf /usr/share/nginx/html # remove default website
 	service nginx restart # restarts nginx
-	cd ~/www-ubuntu
-	sed -i 's/hasInstallWWWRun.*/hasInstallWWWRun=true/' www-ubuntu.conf
+	cd ~/basebuntu
+	sed -i 's/hasInstallWWWRun.*/hasInstallWWWRun=true/' basebuntu.conf
 }
 
 # MariaDB
@@ -565,8 +568,8 @@ mariadb)
 	installMariadb
 	;;
 # other options/custom commands
-update-wwwu)
-	updateWwwUbuntu
+update-bb)
+	updateBasebuntu
 	;;
 harden-ssh)
 	hardenSsh $2
@@ -630,7 +633,7 @@ nginx-config)
 	echo '  - info                    (Displays information about the OS, ARCH and VERSION)'
 	echo '  - ip                      (Displays the external IP address of the server)'
 	echo '  - updater                 (Updates/upgrades packages, no release upgrades)'
-	echo '  - update-wwwu             (Updates www-ubuntu and keeps current config file)'
+	echo '  - update-bb               (Updates basebuntu and keeps current config file)'
 	echo '  - locale                  (Fix locales issue with OpenVZ Ubuntu templates)'
 	echo '  - test                    (Run the classic disk IO and classic cachefly network test)'
 	echo '  '
