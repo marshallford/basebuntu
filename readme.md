@@ -177,3 +177,7 @@ Opens Nginx config in nano.
 #### People that have helped along the way
 
 - [vt0r/Salvatore LaMendola](https://github.com/jogfsovt/)
+
+#### Software Used
+
+- [nginx-init-ubuntu (Github)](https://github.com/JasonGiedymin/nginx-init-ubuntu)
