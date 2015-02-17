@@ -5,7 +5,7 @@
 currentUbuntuVersionSupported="14.04"
 
 ############################################################
-# Functions
+# Base Functions
 ############################################################
 
 # installer nickName, actualName
@@ -88,9 +88,10 @@ function checkSanity
 }
 
 ############################################################
-# Initial Setup
+# Initial Setup Tools/Commands
 ############################################################
 
+# Standard list of tools commonly used
 function baseInstaller
 {
 	installer nano nano # text editor
@@ -306,7 +307,7 @@ function installUfw
 	installer ufw ufw
 	# Reconfigure sshd - change port
 	sed -i 's/^Port [0-9]*/Port '$1'/' /etc/ssh/sshd_config
-    service ssh restart
+	service ssh restart
 
 	ufw disable
 	ufw default allow outgoing
@@ -468,7 +469,7 @@ function removeSite
 	cd ~
 	rm /etc/nginx/sites-available/$1.conf
 	rm /etc/nginx/sites-enabled/$1.conf
-	service nginx restart
+	wwwRestart
 	printInfo "$1 was removed successfully"
 }
 
@@ -486,7 +487,7 @@ function enableSite
 		printWarn "A config for $1 does not exsist. Please use the add-site command"
 	else
 		ln -s /etc/nginx/sites-available/$1.conf /etc/nginx/sites-enabled/$1.conf
-		service nginx restart
+		wwwRestart
 		printInfo "$1 was enabled successfully"
 	fi
 }
@@ -508,6 +509,7 @@ function disableSite
 		service nginx restart
 		printInfo "$1 was disabled successfully"
 	fi
+	wwwRestart
 }
 
 function editSite
@@ -521,12 +523,14 @@ function editSite
 	else
 		nano /etc/nginx/sites-available/$1.conf
 	fi
+	wwwRestart
 }
 
 function editNginxConfig
 {
 	cd /etc/nginx
 	nano /etc/nginx/nginx.conf
+	wwwRestart
 }
 
 # www-restart
