@@ -149,6 +149,7 @@ Opens Nginx config in nano.
 - Run `htop` to see RAM and CPU usage
 - Reboot to test that everything is working ok after a boot cycle
 - To enable Pagespeed on a virtualhost, include `/etc/ngnix/pagespeed.conf`
+- To enable PHP-FPM on a virtualhost, include `/etc/ngnix/enable-php.conf`
 
 ## Credits
 

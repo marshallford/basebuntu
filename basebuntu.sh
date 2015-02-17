@@ -148,7 +148,7 @@ function ppaGit
 	printInfo "git was upgraded to the ppa verison"
 }
 
-function scriptAlias
+function scriptAliases
 {
 	source ~/basebuntu/basebuntu.conf
 	if [ "$hasAnAliasBeenAdded" = false ]
@@ -181,7 +181,7 @@ function baseSetup
 	ppaSupport
 	baseInstaller
 	runCleaner
-	scriptAlias
+	scriptAliases
 }
 
 ############################################################
@@ -250,8 +250,9 @@ function installWWW
 	cp ~/basebuntu/www-conf/nginx-init /etc/init.d/nginx
 	chmod +x /etc/init.d/nginx
 	/usr/sbin/update-rc.d -f nginx defaults
-	# Load in custom pagespeed conf
+	# Load in custom confs
 	cp ~/basebuntu/www-conf/pagespeed.conf /etc/nginx/pagespeed.conf
+	cp ~/basebuntu/www-conf/enable-php.conf /etc/nginx/enable-php.conf
 	# Load in h5bp/server-configs-nginx mime.types
 	rm /etc/nginx/mime.types
 	cp ~/temp-h5bp/mime.types /etc/nginx/mime.types
