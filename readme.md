@@ -14,6 +14,7 @@ Remove excess packages and install the basic components needed for a light-weigh
  - PHP-FPM (alternative to mod_php)
  - UFW (firewall)
  - MariaDB (database)
+ - Ruby environment using RVM
  - Pagespeed (Ngnix module for reducing page load time)
  - Commands for easy administration
  - Custom Nginx commands for working with website configs
@@ -34,6 +35,7 @@ Warning! This script will overwrite previous configs during re-installation. Whi
 	./basebuntu.sh ufw [ssh port]
 	./basebuntu.sh www
 	./basebuntu.sh mariadb
+	./baasebuntu.sh ruby
 
 ## Extra options and other commands
 
