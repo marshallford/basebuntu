@@ -198,8 +198,8 @@ function installWWW
 		die "installWWW has already been run, if run again conflicts will be created"
 	fi
 	NGINX="1.6.2"
-	PAGESPEED="1.9.32.2"
-	PSOL="1.9.32.2"
+	PAGESPEED="1.9.32.3"
+	PSOL="1.9.32.3"
 	WWWUSER="deploy"
 	# Create user
 	adduser deploy
