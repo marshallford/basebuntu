@@ -10,6 +10,7 @@ currentUbuntuVersionSupported="14.04"
 
 # installer nickName, actualName
 # example: installer best-text-editor nano
+# example: installer text-editors nano vim vi emacs
 function installer
 {
 	if [ -z "`which "$1" 2>/dev/null`" ]
@@ -20,16 +21,15 @@ function installer
 		do
 			DEBIAN_FRONTEND=noninteractive apt-get -q -y install "$1"
 			apt-get clean
-			printInfo "$executable installed"
 			shift
 		done
-	else
-		printWarn "$2 already installed"
 	fi
+	printInfo "$executable installed"
 }
 
 # uninstaller nickName, actualName
 # example: uninstaller /usr/sbin/apache2 'apache2*'
+# Note: Only allows a single item at a time, unlike installer.
 function uninstaller
 {
 	if [ -n "`which "$1" 2>/dev/null`" ]
@@ -94,19 +94,17 @@ function checkSanity
 # Standard list of tools commonly used
 function baseInstaller
 {
-	installer nano nano # text editor
-	installer vim vim # text editor
+	installer text-editors nano vim # text editors
 	installer iftop iftop # show network usage
 	installer nload nload # visualize network usage
 	installer htop htop # task manager
 	installer mc mc # file explorer
-	installer unzip unzip
-	installer zip zip
-	installer curl curl
+	installer archive-tools unzip zip
+	installer curl curl # alternative to wget
 	installer screen screen
 	installer gt5 gt5 # visual disk usage
 	installer nslookup dnsutils # dns tools
-	ppaGit # verison control
+	ppaGit # version control
 }
 
 function removeUneededPackages
@@ -124,8 +122,7 @@ function setTimezone
 
 function ppaSupport
 {
-	installer python-software-properties python-software-properties
-	installer software-properties-common software-properties-common
+	installer ppa-support python-software-properties software-properties-common
 }
 
 function hardenSysctl
@@ -205,9 +202,7 @@ function installWWW
 	adduser deploy
 	# PHP
 	# https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-ubuntu-14-04
-	installer php5-fpm php5-fpm
-	installer php5-mysql php5-mysql
-	installer php-apc php-apc
+	installer php5 php5-fpm php5-mysql php-apc
 	sed -i "s/user = www-data/user = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
 	sed -i "s/group = www-data/group = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
 	sed -i "s/listen.owner = www-data/listen.owner = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
@@ -216,11 +211,7 @@ function installWWW
 	service php5-fpm restart
 
 	# Nginx/Pagespeed from source
-	installer build-essential build-essential
-	installer zlib1g-dev zlib1g-dev
-	installer libpcre3 libpcre3
-	installer libpcre3-dev libpcre3-dev
-	installer libssl-dev libssl-dev
+	installer nginx-build-dependencies build-essential zlib1g-dev libpcre3 libpcre3-dev libssl-dev
 	cd ~
 	wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${PAGESPEED}-beta.zip
 	unzip release-${PAGESPEED}-beta.zip
@@ -324,11 +315,12 @@ function installUfw
 # https://gorails.com/deploy/ubuntu/14.04
 function installRuby {
 	cd ~
-	apt-get install libgdbm-dev libncurses5-dev automake libtool bison libffi-dev
+	RUBY="2.2.1"
+	installer ruby-build-dependencies libgdbm-dev libncurses5-dev automake libtool bison libffi-dev
 	curl -L https://get.rvm.io | bash -s stable
 	source ~/.rvm/scripts/rvm
-	rvm install 2.2.1
-	rvm use 2.2.1 --default
+	rvm install $RUBY
+	rvm use $RUBY --default
 	ruby -v
 	echo "gem: --no-ri --no-rdoc" > ~/.gemrc
 	gem install bundler
@@ -648,7 +640,7 @@ nginx-config)
 	echo '  - ufw [ssh port]          (Setup basic firewall with HTTP(S) and SSH open)'
 	echo '  - www                     (Install Ngnix, PHP, and Pagespeed)'
 	echo '  - mariadb                 (Install MySQL alternative and set root password)'
-echo '  - ruby                    (Install Ruby with RVM)'
+	echo '  - ruby                    (Install Ruby with RVM)'
 	echo '  '
 	echo 'Extra options and custom commands:'
 	echo '  - harden-ssh [option #]   (Hardens openSSH with PermitRoot and PasswordAuthentication)'
