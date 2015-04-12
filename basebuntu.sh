@@ -13,7 +13,7 @@ currentUbuntuVersionSupported="14.04"
 # example: installer text-editors nano vim vi emacs
 function installer
 {
-	if [ -z "`which "$1" 2>/dev/null`" ]
+	if [ -z "$(which "$1" 2>/dev/null)" ]
 	then
 		executable=$1
 		shift
@@ -32,7 +32,7 @@ function installer
 # Note: Only allows a single item at a time, unlike installer.
 function uninstaller
 {
-	if [ -n "`which "$1" 2>/dev/null`" ]
+	if [ -n "$(which "$1" 2>/dev/null)" ]
 	then
 		DEBIAN_FRONTEND=noninteractive apt-get -q -y remove --purge "$2"
 		apt-get clean
@@ -293,7 +293,7 @@ function installUfw
 {
 	if [ -z "$1" ]
 	then
-		die "Usage: `basename $0` firewall [ssh port]"
+		die "Usage: $(basename $0) firewall [ssh port]"
 	fi
 	installer ufw ufw
 	# Reconfigure sshd - change port
@@ -390,7 +390,7 @@ function hardenSsh
 {
 	if [ -z "$1" ]
 	then
-		die "Usage: `basename $0` harden-ssh [option #]"
+		die "Usage: $(basename $0) harden-ssh [option #]"
 	fi
 	if [ "$1" == 1 ] # All users including root can only login via SSH-keys.
 	then
@@ -409,7 +409,7 @@ function hardenSsh
 		sed -i 's/.PermitRootLogin.*/PermitRootLogin without-password/' /etc/ssh/sshd_config
 		sed -i 's/.PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
 	else
-		die "Usage: `basename $0` harden-ssh [option #]"
+		die "Usage: $(basename $0) harden-ssh [option #]"
 	fi
 	service ssh restart
 	printInfo "SSH hardening sucessful"
@@ -453,7 +453,7 @@ function addSite
 {
 	if [ -z "$1" ]
 	then
-		die "Usage: `basename $0` add-site [website name]"
+		die "Usage: $(basename $0) add-site [website name]"
 	fi
 	cd /sites
 	mkdir -p $1/public
@@ -468,7 +468,7 @@ function removeSite
 {
 	if [ -z "$1" ]
 	then
-		die "Usage: `basename $0` remove-site [website name]"
+		die "Usage: $(basename $0) remove-site [website name]"
 	fi
 	cd /sites
 	rm -rf $1
@@ -483,7 +483,7 @@ function enableSite
 {
 	if [ -z "$1" ]
 	then
-		die "Usage: `basename $0` enable-site [website name]"
+		die "Usage: $(basename $0) enable-site [website name]"
 	fi
 	if [ -L /etc/nginx/sites-enabled/$1.conf ]
 	then
@@ -502,7 +502,7 @@ function disableSite
 {
 	if [ -z "$1" ]
 	then
-		die "Usage: `basename $0` disable-site [website name]"
+		die "Usage: $(basename $0) disable-site [website name]"
 	fi
 	if [ ! -f /etc/nginx/sites-available/$1.conf ]
 	then
@@ -522,7 +522,7 @@ function editSite
 {
 	if [ -z "$1" ]
 	then
-		die "Usage: `basename $0` edit-site [website name]"
+		die "Usage: $(basename $0) edit-site [website name]"
 	elif [ ! -f /etc/nginx/sites-available/$1.conf ]
 	then
 		die "A config for $1 does not exsist. Please use the add-site command"
@@ -633,7 +633,7 @@ nginx-config)
 *)
 	osInfo
 	echo '  '
-	echo 'Usage:' `basename $0` '[option] [argument]'
+	echo 'Usage:' $(basename $0) '[option] [argument]'
 	echo '  '
 	echo 'Main options (in recomended order):'
 	echo '  - setup                   (Remove unneeded, upgrade system, install software)'
