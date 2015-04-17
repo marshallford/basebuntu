@@ -194,7 +194,7 @@ function installWWW
 	then
 		die "installWWW has already been run, if run again conflicts will be created"
 	fi
-	NGINX="1.6.2"
+	NGINX="1.6.3"
 	PAGESPEED="1.9.32.3"
 	PSOL="1.9.32.3"
 	WWWUSER="deploy"
@@ -315,7 +315,7 @@ function installUfw
 # https://gorails.com/deploy/ubuntu/14.04
 function installRuby {
 	cd ~
-	RUBY="2.2.1"
+	RUBY="2.2.2"
 	installer ruby-build-dependencies libgdbm-dev libncurses5-dev automake libtool bison libffi-dev
 	curl -L https://get.rvm.io | bash -s stable
 	source ~/.rvm/scripts/rvm
