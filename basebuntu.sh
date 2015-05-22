@@ -13,18 +13,18 @@ currentUbuntuVersionSupported="14.04"
 # example: installer text-editors nano vim vi emacs
 function installer
 {
-	if [ -z "$(which "$1" 2>/dev/null)" ]
-	then
-		executable=$1
-		shift
-		while [ -n "$1" ]
-		do
-			DEBIAN_FRONTEND=noninteractive apt-get -q -y install "$1"
-			apt-get clean
-			shift
-		done
-	fi
-	printInfo "$executable installed"
+    if [ -z "$(which "$1" 2>/dev/null)" ]
+    then
+        executable=$1
+        shift
+        while [ -n "$1" ]
+        do
+            DEBIAN_FRONTEND=noninteractive apt-get -q -y install "$1"
+            apt-get clean
+            shift
+        done
+    fi
+    printInfo "$executable installed"
 }
 
 # uninstaller nickName, actualName
@@ -32,59 +32,59 @@ function installer
 # Note: Only allows a single item at a time, unlike installer.
 function uninstaller
 {
-	if [ -n "$(which "$1" 2>/dev/null)" ]
-	then
-		DEBIAN_FRONTEND=noninteractive apt-get -q -y remove --purge "$2"
-		apt-get clean
-		printInfo "$2 uninstalled"
-	else
-		printWarn "$2 is not installed"
-	fi
+    if [ -n "$(which "$1" 2>/dev/null)" ]
+    then
+        DEBIAN_FRONTEND=noninteractive apt-get -q -y remove --purge "$2"
+        apt-get clean
+        printInfo "$2 uninstalled"
+    else
+        printWarn "$2 is not installed"
+    fi
 }
 
 # exits script if something goes wrong
 function die
 {
-	echo "ERROR: $1" > /dev/null 1>&2
-	exit 1
+    echo "ERROR: $1" > /dev/null 1>&2
+    exit 1
 }
 
 # Green Text
 function printInfo {
-	echo -n -e '\e[32m'
-	echo -n $1
-	echo -e '\e[0m'
+    echo -n -e '\e[32m'
+    echo -n $1
+    echo -e '\e[0m'
 }
 
 # Yellow Text
 function printWarn
 {
-	echo -n -e '\e[93m'
-	echo -n $1
-	echo -e '\e[0m'
+    echo -n -e '\e[93m'
+    echo -n $1
+    echo -e '\e[0m'
 }
 
 # Red Text
 function printError
 {
-	echo -n -e '\e[91m'
-	echo -n $1
-	echo -e '\e[0m'
+    echo -n -e '\e[91m'
+    echo -n $1
+    echo -e '\e[0m'
 }
 
 # Do some sanity checking (root and Ubuntu version)
 function checkSanity
 {
-	if [ $(/usr/bin/id -u) != "0" ]
-	then
-		die 'Must be run by root user'
-	fi
-	. /etc/lsb-release
-	version=$DISTRIB_RELEASE
-	if [ "$version" != "$currentUbuntuVersionSupported" ]
-	then
-		die "Distribution is not supported"
-	fi
+    if [ $(/usr/bin/id -u) != "0" ]
+    then
+        die 'Must be run by root user'
+    fi
+    . /etc/lsb-release
+    version=$DISTRIB_RELEASE
+    if [ "$version" != "$currentUbuntuVersionSupported" ]
+    then
+        die "Distribution is not supported"
+    fi
 }
 
 ############################################################
@@ -94,92 +94,92 @@ function checkSanity
 # Standard list of tools commonly used
 function baseInstaller
 {
-	installer text-editors nano vim # text editors
-	installer iftop iftop # show network usage
-	installer nload nload # visualize network usage
-	installer htop htop # task manager
-	installer mc mc # file explorer
-	installer archive-tools unzip zip
-	installer curl curl # alternative to wget
-	installer screen screen
-	installer gt5 gt5 # visual disk usage
-	installer nslookup dnsutils # dns tools
-	ppaGit # version control
+    installer text-editors nano vim # text editors
+    installer iftop iftop # show network usage
+    installer nload nload # visualize network usage
+    installer htop htop # task manager
+    installer mc mc # file explorer
+    installer archive-tools unzip zip
+    installer curl curl # alternative to wget
+    installer screen screen
+    installer gt5 gt5 # visual disk usage
+    installer nslookup dnsutils # dns tools
+    ppaGit # version control
 }
 
 function removeUneededPackages
 {
-	# Apache
-	service apache2 stop
-	apt-get remove apache2* -y
-	apt-get autoremove -y
+    # Apache
+    service apache2 stop
+    apt-get remove apache2* -y
+    apt-get autoremove -y
 }
 
 function setTimezone
 {
-	dpkg-reconfigure tzdata
+    dpkg-reconfigure tzdata
 }
 
 function ppaSupport
 {
-	installer ppa-support python-software-properties software-properties-common
+    installer ppa-support python-software-properties software-properties-common
 }
 
 function hardenSysctl
 {
-	source ~/basebuntu/basebuntu.conf
-	if [ "$hasHardenSysctlRun" = false ]
-	then
-		cat sysctl-append.conf >> /etc/sysctl.conf
-		sysctl -p > /dev/null
-		sed -i 's/hasHardenSysctlRun.*/hasHardenSysctlRun=true/' basebuntu.conf
-	else
-		printWarn "hardenSysctl has already been run on this system, function skipped."
-	fi
+    source ~/basebuntu/basebuntu.conf
+    if [ "$hasHardenSysctlRun" = false ]
+    then
+        cat sysctl-append.conf >> /etc/sysctl.conf
+        sysctl -p > /dev/null
+        sed -i 's/hasHardenSysctlRun.*/hasHardenSysctlRun=true/' basebuntu.conf
+    else
+        printWarn "hardenSysctl has already been run on this system, function skipped."
+    fi
 }
 
 function ppaGit
 {
-	add-apt-repository ppa:git-core/ppa -y
-	apt-get update
-	apt-get upgrade -y # git was installed to pull in basebuntu
-	printInfo "git was upgraded to the ppa verison"
+    add-apt-repository ppa:git-core/ppa -y
+    apt-get update
+    apt-get upgrade -y # git was installed to pull in basebuntu
+    printInfo "git was upgraded to the ppa verison"
 }
 
 function scriptAliases
 {
-	source ~/basebuntu/basebuntu.conf
-	if [ "$hasAnAliasBeenAdded" = false ]
-	then
-		echo "alias basebuntu='/root/basebuntu/basebuntu.sh'" >> /root/.bashrc
-		echo "alias bb='/root/basebuntu/basebuntu.sh'" >> /root/.bashrc
-		cd ~/basebuntu
-		sed -i 's/hasAnAliasBeenAdded.*/hasAnAliasBeenAdded=true/' basebuntu.conf
-	fi
+    source ~/basebuntu/basebuntu.conf
+    if [ "$hasAnAliasBeenAdded" = false ]
+    then
+        echo "alias basebuntu='/root/basebuntu/basebuntu.sh'" >> /root/.bashrc
+        echo "alias bb='/root/basebuntu/basebuntu.sh'" >> /root/.bashrc
+        cd ~/basebuntu
+        sed -i 's/hasAnAliasBeenAdded.*/hasAnAliasBeenAdded=true/' basebuntu.conf
+    fi
 }
 
 function updateBasebuntu
 {
-	cp ~/basebuntu/basebuntu.conf ~/basebuntu.conf.tmp
-	cd ~/basebuntu
-	git reset --hard HEAD
-	git pull
-	chmod +x basebuntu.sh
-	rm basebuntu.conf
-	mv ~/basebuntu.conf.tmp ~/basebuntu/basebuntu.conf
-	printInfo "Updated basebuntu successfully"
+    cp ~/basebuntu/basebuntu.conf ~/basebuntu.conf.tmp
+    cd ~/basebuntu
+    git reset --hard HEAD
+    git pull
+    chmod +x basebuntu.sh
+    rm basebuntu.conf
+    mv ~/basebuntu.conf.tmp ~/basebuntu/basebuntu.conf
+    printInfo "Updated basebuntu successfully"
 }
 
 function baseSetup
 {
-	setTimezone
-	removeUneededPackages
-	runUpdater
-	hardenSysctl
-	ppaSupport
-	baseInstaller
-	runCleaner
-	scriptAliases
+    setTimezone
+    removeUneededPackages
+    runUpdater
+    hardenSysctl
+    ppaSupport
+    baseInstaller
+    runCleaner
+    scriptAliases
 }
 
 ############################################################
@@ -189,141 +189,148 @@ function baseSetup
 # Nginx/PHP
 function installWWW
 {
-	source ~/basebuntu/basebuntu.conf
-	if [ "$hasInstallWWW" = true ]
-	then
-		die "installWWW has already been run, if run again conflicts will be created"
-	fi
-	NGINX="1.6.3"
-	PAGESPEED="1.9.32.3"
-	PSOL="1.9.32.3"
-	WWWUSER="deploy"
-	# Create user
-	adduser deploy
-	# PHP
-	# https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-ubuntu-14-04
-	installer php5 php5-fpm php5-mysql php-apc
-	sed -i "s/user = www-data/user = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
-	sed -i "s/group = www-data/group = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
-	sed -i "s/listen.owner = www-data/listen.owner = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
-	sed -i "s/listen.group = www-data/listen.group = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
-	chown $WWWUSER:$WWWUSER /var/run/php5-fpm.sock
-	service php5-fpm restart
+    source ~/basebuntu/basebuntu.conf
+    if [ "$hasInstallWWW" = true ]
+    then
+        die "installWWW has already been run, if run again conflicts will be created"
+    fi
+    NGINX="1.8.0"
+    PAGESPEED="1.9.32.3"
+    PSOL="1.9.32.3"
+    WWWUSER="deploy"
+    # Create user
+    adduser deploy
+    # PHP
+    # https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-ubuntu-14-04
+    installer php5 php5-fpm php5-mysql php-apc
+    sed -i "s/user = www-data/user = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
+    sed -i "s/group = www-data/group = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
+    sed -i "s/listen.owner = www-data/listen.owner = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
+    sed -i "s/listen.group = www-data/listen.group = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
+    chown $WWWUSER:$WWWUSER /var/run/php5-fpm.sock
+    service php5-fpm restart
 
-	# Nginx/Pagespeed from source
-	installer nginx-build-dependencies build-essential zlib1g-dev libpcre3 libpcre3-dev libssl-dev
-	cd ~
-	wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${PAGESPEED}-beta.zip
-	unzip release-${PAGESPEED}-beta.zip
-	cd ngx_pagespeed-release-${PAGESPEED}-beta/
-	wget https://dl.google.com/dl/page-speed/psol/${PSOL}.tar.gz
-	tar -xzvf ${PSOL}.tar.gz  # extracts to psol/
-	cd ~
-	wget http://nginx.org/download/nginx-$NGINX.tar.gz # download nginx
-	tar -xvzf nginx-$NGINX.tar.gz # uncompress nginx
-	cd nginx-$NGINX/
-	# Below are nginx configure and make commands
-	# Things to note:
-	# 1. User and group is deploy not www-data
-	# 2. Installs needed SSL modules
-	# 3. Includes cool gzip stuff
-	./configure --sbin-path=/usr/local/sbin --conf-path=/etc/nginx/nginx.conf --user=$WWWUSER --group=$WWWUSER --lock-path=/var/lock/nginx.lock --pid-path=/var/run/nginx.pid --add-module=$HOME/ngx_pagespeed-release-$PAGESPEED-beta --with-http_spdy_module --with-http_ssl_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_realip_module
-	make
-	make install
-	# H5BP
-	mkdir ~/temp-h5bp
-	cd ~/temp-h5bp
-	git clone https://github.com/h5bp/server-configs-nginx.git .
-	cp -r ~/temp-h5bp/h5bp /etc/nginx/
-	# Load in custom nginx.conf
-	rm /etc/nginx/nginx.conf
-	cp ~/basebuntu/www-conf/nginx.conf /etc/nginx/nginx.conf
-	# Load in nginx init script
-	cp ~/basebuntu/www-conf/nginx-init /etc/init.d/nginx
-	chmod +x /etc/init.d/nginx
-	/usr/sbin/update-rc.d -f nginx defaults
-	# Load in custom confs
-	cp ~/basebuntu/www-conf/pagespeed.conf /etc/nginx/pagespeed.conf
-	cp ~/basebuntu/www-conf/enable-php.conf /etc/nginx/enable-php.conf
-	# Load in h5bp/server-configs-nginx mime.types
-	rm /etc/nginx/mime.types
-	cp ~/temp-h5bp/mime.types /etc/nginx/mime.types
-	# Load in h5bp/server-configs-nginx sites-available example
-	cp -R ~/temp-h5bp/sites-available/ /etc/nginx/
-	# Make all the needed directories
-	mkdir /var/cache/nginx
-	mkdir /var/ngx_pagespeed_cache
-	mkdir /var/log/nginx
-	mkdir /var/log/pagespeed
-	# mkdir /etc/nginx/sites-available
-	mkdir /etc/nginx/sites-enabled
-	mkdir /sites
-	# permissions for newly created directories
-	chown -R $WWWUSER:$WWWUSER /var/cache/nginx
-	chown -R $WWWUSER:$WWWUSER /var/ngx_pagespeed_cache
-	chown -R $WWWUSER:$WWWUSER /var/log/nginx
-	chown -R $WWWUSER:$WWWUSER /var/log/pagespeed
-	chown -R $WWWUSER:$WWWUSER /etc/nginx/sites-available
-	chown -R $WWWUSER:$WWWUSER /etc/nginx/sites-enabled
-	chown -R $WWWUSER:$WWWUSER /sites
-	# clean up
-	cd ~
-	rm -rf release-${PAGESPEED}-beta.zip nginx-$NGINX.tar.gz nginx-$NGINX ngx_pagespeed-release-${PAGESPEED}-beta temp-h5bp
-	# finishing touches
-	rm -rf /usr/share/nginx/html # remove default website
-	service nginx restart # restarts nginx
-	cd ~/basebuntu
-	sed -i 's/hasInstallWWWRun.*/hasInstallWWWRun=true/' basebuntu.conf
+    # Nginx/Pagespeed from source
+    installer nginx-build-dependencies build-essential zlib1g-dev libpcre3 libpcre3-dev libssl-dev
+    cd ~
+    wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${PAGESPEED}-beta.zip
+    unzip release-${PAGESPEED}-beta.zip
+    cd ngx_pagespeed-release-${PAGESPEED}-beta/
+    wget https://dl.google.com/dl/page-speed/psol/${PSOL}.tar.gz
+    tar -xzvf ${PSOL}.tar.gz  # extracts to psol/
+    cd ~
+    wget http://nginx.org/download/nginx-$NGINX.tar.gz # download nginx
+    tar -xvzf nginx-$NGINX.tar.gz # uncompress nginx
+    cd nginx-$NGINX/
+    # Below are nginx configure and make commands
+    # Things to note:
+    # 1. User and group is deploy not www-data
+    # 2. Installs needed SSL modules
+    # 3. Includes cool gzip stuff
+    ./configure --sbin-path=/usr/local/sbin --conf-path=/etc/nginx/nginx.conf --user=$WWWUSER --group=$WWWUSER --lock-path=/var/lock/nginx.lock --pid-path=/var/run/nginx.pid --add-module=$HOME/ngx_pagespeed-release-$PAGESPEED-beta --with-http_spdy_module --with-http_ssl_module --with-http_gzip_static_module --with-http_stub_status_module --with-http_realip_module
+    make
+    make install
+    # H5BP
+    mkdir ~/temp-h5bp
+    cd ~/temp-h5bp
+    git clone https://github.com/h5bp/server-configs-nginx.git .
+    cp -r ~/temp-h5bp/h5bp /etc/nginx/
+    # Load in custom nginx.conf
+    rm /etc/nginx/nginx.conf
+    cp ~/basebuntu/www-conf/nginx.conf /etc/nginx/nginx.conf
+    # Load in nginx init script
+    cp ~/basebuntu/www-conf/nginx-init /etc/init.d/nginx
+    chmod +x /etc/init.d/nginx
+    /usr/sbin/update-rc.d -f nginx defaults
+    # Load in custom confs
+    cp ~/basebuntu/www-conf/pagespeed.conf /etc/nginx/pagespeed.conf
+    cp ~/basebuntu/www-conf/enable-php.conf /etc/nginx/enable-php.conf
+    # Load in h5bp/server-configs-nginx mime.types
+    rm /etc/nginx/mime.types
+    cp ~/temp-h5bp/mime.types /etc/nginx/mime.types
+    # Load in h5bp/server-configs-nginx sites-available example
+    cp -R ~/temp-h5bp/sites-available/ /etc/nginx/
+    # Make all the needed directories
+    mkdir /var/cache/nginx
+    mkdir /var/ngx_pagespeed_cache
+    mkdir /var/log/nginx
+    mkdir /var/log/pagespeed
+    # mkdir /etc/nginx/sites-available
+    mkdir /etc/nginx/sites-enabled
+    mkdir /sites
+    # permissions for newly created directories
+    chown -R $WWWUSER:$WWWUSER /var/cache/nginx
+    chown -R $WWWUSER:$WWWUSER /var/ngx_pagespeed_cache
+    chown -R $WWWUSER:$WWWUSER /var/log/nginx
+    chown -R $WWWUSER:$WWWUSER /var/log/pagespeed
+    chown -R $WWWUSER:$WWWUSER /etc/nginx/sites-available
+    chown -R $WWWUSER:$WWWUSER /etc/nginx/sites-enabled
+    chown -R $WWWUSER:$WWWUSER /sites
+    wwwPermissions
+    # clean up
+    cd ~
+    rm -rf release-${PAGESPEED}-beta.zip nginx-$NGINX.tar.gz nginx-$NGINX ngx_pagespeed-release-${PAGESPEED}-beta temp-h5bp
+    # finishing touches
+    rm -rf /usr/share/nginx/html # remove default website
+    service nginx restart # restarts nginx
+    cd ~/basebuntu
+    sed -i 's/hasInstallWWWRun.*/hasInstallWWWRun=true/' basebuntu.conf
 }
 
 # MariaDB
 function installMariadb
 {
-	apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
-	add-apt-repository 'deb http://mirror.stshosting.co.uk/mariadb/repo/10.0/ubuntu trusty main'
-	apt-get update
-	installer mariadb-server mariadb-server
-	service mysql start
-	printInfo "Respond YES to all questions asked to secure your MariaDB install"
-	mysql_secure_installation
+    apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
+    add-apt-repository 'deb http://mirror.stshosting.co.uk/mariadb/repo/10.0/ubuntu trusty main'
+    apt-get update
+    installer mariadb-server mariadb-server
+    service mysql start
+    printInfo "Respond YES to all questions asked to secure your MariaDB install"
+    mysql_secure_installation
 }
 
 # UFW
 function installUfw
 {
-	if [ -z "$1" ]
-	then
-		die "Usage: $(basename $0) firewall [ssh port]"
-	fi
-	installer ufw ufw
-	# Reconfigure sshd - change port
-	sed -i 's/^Port [0-9]*/Port '$1'/' /etc/ssh/sshd_config
-	service ssh restart
+    if [ -z "$1" ]
+    then
+        die "Usage: $(basename $0) firewall [ssh port]"
+    fi
+    installer ufw ufw
+    # Reconfigure sshd - change port
+    sed -i 's/^Port [0-9]*/Port '$1'/' /etc/ssh/sshd_config
+    service ssh restart
 
-	ufw disable
-	ufw default allow outgoing
-	ufw default deny incoming
-	ufw allow http
-	ufw allow https
-	ufw allow $1
-	ufw --force enable
-	printInfo "UFW Status"
-	ufw status
+    ufw disable
+    ufw default allow outgoing
+    ufw default deny incoming
+    ufw allow http
+    ufw allow https
+    ufw allow $1
+    ufw --force enable
+    printInfo "UFW Status"
+    ufw status
 }
 
 # Ruby
 # https://gorails.com/deploy/ubuntu/14.04
+# Upgrade instructions...
+# 1. run > rvm get stable
+# 2. run to find availabe versions > list known
+# 3. run > rvm upgrade [ruby version here]
+# 4. answer yes to all questions
+# 5. run to upgrade gems if you wish > rvm all do gem update
 function installRuby {
-	cd ~
-	RUBY="2.2.2"
-	installer ruby-build-dependencies libgdbm-dev libncurses5-dev automake libtool bison libffi-dev
-	curl -L https://get.rvm.io | bash -s stable
-	source ~/.rvm/scripts/rvm
-	rvm install $RUBY
-	rvm use $RUBY --default
-	ruby -v
-	echo "gem: --no-ri --no-rdoc" > ~/.gemrc
-	gem install bundler
+    cd ~
+    RUBY="2.2.1"
+    installer ruby-build-dependencies libgdbm-dev libncurses5-dev automake libtool bison libffi-dev
+    curl -L https://get.rvm.io | bash -s stable
+    source ~/.rvm/scripts/rvm
+    rvm install $RUBY
+    rvm use $RUBY --default
+    ruby -v
+    echo "gem: --no-ri --no-rdoc" > ~/.gemrc
+    gem install bundler
 }
 
 ############################################################
@@ -333,115 +340,115 @@ function installRuby {
 # updater
 function runUpdater
 {
-	for i in 1 2
-	do
-		apt-get -q -y update
-		apt-get -q -y upgrade
-		apt-get -q -y dist-upgrade
-		# clean up
-		runCleaner
-	done
+    for i in 1 2
+    do
+        apt-get -q -y update
+        apt-get -q -y upgrade
+        apt-get -q -y dist-upgrade
+        # clean up
+        runCleaner
+    done
 }
 
 function runCleaner
 {
-	apt-get -q -y autoremove
-	apt-get -q -y autoclean
-	apt-get -q -y clean
+    apt-get -q -y autoremove
+    apt-get -q -y autoclean
+    apt-get -q -y clean
 }
 
 # test
 function runTests
 {
-	printInfo "Classic I/O test"
-	printInfo "dd if=/dev/zero of=iotest bs=64k count=16k conv=fdatasync && rm -fr iotest"
-	dd if=/dev/zero of=iotest bs=64k count=16k conv=fdatasync && rm -fr iotest
+    printInfo "Classic I/O test"
+    printInfo "dd if=/dev/zero of=iotest bs=64k count=16k conv=fdatasync && rm -fr iotest"
+    dd if=/dev/zero of=iotest bs=64k count=16k conv=fdatasync && rm -fr iotest
 
-	printInfo "Network test"
-	printInfo "wget cachefly.cachefly.net/100mb.test -O 100mb.test && rm -fr 100mb.test"
-	wget cachefly.cachefly.net/100mb.test -O 100mb.test && rm -fr 100mb.test
+    printInfo "Network test"
+    printInfo "wget cachefly.cachefly.net/100mb.test -O 100mb.test && rm -fr 100mb.test"
+    wget cachefly.cachefly.net/100mb.test -O 100mb.test && rm -fr 100mb.test
 }
 
 # locale
 function fixLocale
 {
-	installer multipath-tools multipath-tools
-	export LANGUAGE=en_US.UTF-8
-	export LANG=en_US.UTF-8
-	export LC_ALL=en_US.UTF-8
-	# Generate locale
-	locale-gen en_US.UTF-8
-	dpkg-reconfigure locales
+    installer multipath-tools multipath-tools
+    export LANGUAGE=en_US.UTF-8
+    export LANG=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+    # Generate locale
+    locale-gen en_US.UTF-8
+    dpkg-reconfigure locales
 }
 
 # ip
 # script compatible with NATed servers.
 function getIp
 {
-	IP=$(wget -qO- ipv4.icanhazip.com)
-	if [ "$IP" = "" ]; then
-    	IP=$(ifconfig | grep 'inet addr:' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d: -f2 | awk '{ print $1}')
-	fi
-	echo $IP
+    IP=$(wget -qO- ipv4.icanhazip.com)
+    if [ "$IP" = "" ]; then
+        IP=$(ifconfig | grep 'inet addr:' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | cut -d: -f2 | awk '{ print $1}')
+    fi
+    echo $IP
 }
 
 # harden-ssh [option #]
 function hardenSsh
 {
-	if [ -z "$1" ]
-	then
-		die "Usage: $(basename $0) harden-ssh [option #]"
-	fi
-	if [ "$1" == 1 ] # All users including root can only login via SSH-keys.
-	then
-		sed -i 's/.PermitRootLogin.*/PermitRootLogin without-password/' /etc/ssh/sshd_config
-		sed -i 's/.PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
-	elif [ "$1" == 2 ] # Normal users can login via SSH-keys, root can't login at all.
-	then
-		sed -i 's/.PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
-		sed -i 's/.PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
-	elif [ "$1" == 3 ] # Root can't login, normal users can use SSH-keys or plain passwords.
-	then
-		sed -i 's/.PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
-		sed -i 's/.PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
-	elif [ "$1" == 4 ] # Normal users can login with SSH-keys or plain passwords, root can only login via SSH-keys.
-	then
-		sed -i 's/.PermitRootLogin.*/PermitRootLogin without-password/' /etc/ssh/sshd_config
-		sed -i 's/.PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
-	else
-		die "Usage: $(basename $0) harden-ssh [option #]"
-	fi
-	service ssh restart
-	printInfo "SSH hardening sucessful"
+    if [ -z "$1" ]
+    then
+        die "Usage: $(basename $0) harden-ssh [option #]"
+    fi
+    if [ "$1" == 1 ] # All users including root can only login via SSH-keys.
+    then
+        sed -i 's/.PermitRootLogin.*/PermitRootLogin without-password/' /etc/ssh/sshd_config
+        sed -i 's/.PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+    elif [ "$1" == 2 ] # Normal users can login via SSH-keys, root can't login at all.
+    then
+        sed -i 's/.PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+        sed -i 's/.PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+    elif [ "$1" == 3 ] # Root can't login, normal users can use SSH-keys or plain passwords.
+    then
+        sed -i 's/.PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+        sed -i 's/.PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+    elif [ "$1" == 4 ] # Normal users can login with SSH-keys or plain passwords, root can only login via SSH-keys.
+    then
+        sed -i 's/.PermitRootLogin.*/PermitRootLogin without-password/' /etc/ssh/sshd_config
+        sed -i 's/.PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+    else
+        die "Usage: $(basename $0) harden-ssh [option #]"
+    fi
+    service ssh restart
+    printInfo "SSH hardening sucessful"
 }
 
 # info
 function osInfo
 {
-	# Thanks for Mikel (http://unix.stackexchange.com/users/3169/mikel) for the code sample which was later modified a bit
-	# http://unix.stackexchange.com/questions/6345/how-can-i-get-distribution-name-and-version-number-in-a-simple-shell-script
-	ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
+    # Thanks for Mikel (http://unix.stackexchange.com/users/3169/mikel) for the code sample which was later modified a bit
+    # http://unix.stackexchange.com/questions/6345/how-can-i-get-distribution-name-and-version-number-in-a-simple-shell-script
+    ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
 
-	. /etc/lsb-release
-	OS=$DISTRIB_ID
-	VERSION=$DISTRIB_RELEASE
+    . /etc/lsb-release
+    OS=$DISTRIB_ID
+    VERSION=$DISTRIB_RELEASE
 
-	OS_SUMMARY=$OS
-	OS_SUMMARY+=" "
-	OS_SUMMARY+=$VERSION
-	OS_SUMMARY+=" "
-	OS_SUMMARY+=$ARCH
-	OS_SUMMARY+="bit"
+    OS_SUMMARY=$OS
+    OS_SUMMARY+=" "
+    OS_SUMMARY+=$VERSION
+    OS_SUMMARY+=" "
+    OS_SUMMARY+=$ARCH
+    OS_SUMMARY+="bit"
 
-	printInfo "$OS_SUMMARY"
+    printInfo "$OS_SUMMARY"
 }
 
 # fail2ban
 function fail2banInstall {
-	installer fail2ban fail2ban
-	cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
-	service fail2ban restart
-	printWarn "Fail2ban's config file is located in /etc/fail2ban/jail.local"
+    installer fail2ban fail2ban
+    cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+    service fail2ban restart
+    printWarn "Fail2ban's config file is located in /etc/fail2ban/jail.local"
 
 }
 
@@ -451,112 +458,112 @@ function fail2banInstall {
 
 function addSite
 {
-	if [ -z "$1" ]
-	then
-		die "Usage: $(basename $0) add-site [website name]"
-	fi
-	cd /sites
-	mkdir -p $1/public
-	wwwPermissions
-	cp /etc/nginx/sites-available/example.com /etc/nginx/sites-available/$1.conf # use example site
-	sed -i "s/example.com/$1/g" "/etc/nginx/sites-available/$1.conf" # change example.com to domain name
-	cd ~
-	printInfo "$1 was added successfully"
+    if [ -z "$1" ]
+    then
+        die "Usage: $(basename $0) add-site [website name]"
+    fi
+    cd /sites
+    mkdir -p $1/public
+    wwwPermissions
+    cp /etc/nginx/sites-available/example.com /etc/nginx/sites-available/$1.conf # use example site
+    sed -i "s/example.com/$1/g" "/etc/nginx/sites-available/$1.conf" # change example.com to domain name
+    cd ~
+    printInfo "$1 was added successfully"
 }
 
 function removeSite
 {
-	if [ -z "$1" ]
-	then
-		die "Usage: $(basename $0) remove-site [website name]"
-	fi
-	cd /sites
-	rm -rf $1
-	cd ~
-	rm /etc/nginx/sites-available/$1.conf
-	rm /etc/nginx/sites-enabled/$1.conf
-	wwwRestart
-	printInfo "$1 was removed successfully"
+    if [ -z "$1" ]
+    then
+        die "Usage: $(basename $0) remove-site [website name]"
+    fi
+    cd /sites
+    rm -rf $1
+    cd ~
+    rm /etc/nginx/sites-available/$1.conf
+    rm /etc/nginx/sites-enabled/$1.conf
+    wwwRestart
+    printInfo "$1 was removed successfully"
 }
 
 function enableSite
 {
-	if [ -z "$1" ]
-	then
-		die "Usage: $(basename $0) enable-site [website name]"
-	fi
-	if [ -L /etc/nginx/sites-enabled/$1.conf ]
-	then
-		printWarn "$1 already enabled"
-	elif [ ! -f /etc/nginx/sites-available/$1.conf ]
-	then
-		printWarn "A config for $1 does not exsist. Please use the add-site command"
-	else
-		ln -s /etc/nginx/sites-available/$1.conf /etc/nginx/sites-enabled/$1.conf
-		wwwRestart
-		printInfo "$1 was enabled successfully"
-	fi
+    if [ -z "$1" ]
+    then
+        die "Usage: $(basename $0) enable-site [website name]"
+    fi
+    if [ -L /etc/nginx/sites-enabled/$1.conf ]
+    then
+        printWarn "$1 already enabled"
+    elif [ ! -f /etc/nginx/sites-available/$1.conf ]
+    then
+        printWarn "A config for $1 does not exsist. Please use the add-site command"
+    else
+        ln -s /etc/nginx/sites-available/$1.conf /etc/nginx/sites-enabled/$1.conf
+        wwwRestart
+        printInfo "$1 was enabled successfully"
+    fi
 }
 
 function disableSite
 {
-	if [ -z "$1" ]
-	then
-		die "Usage: $(basename $0) disable-site [website name]"
-	fi
-	if [ ! -f /etc/nginx/sites-available/$1.conf ]
-	then
-		printWarn "A config for $1 does not exsist. Please use the add-site command"
-	elif [ ! -L /etc/nginx/sites-enabled/$1.conf ]
-	then
-		printWarn "$1 is not enabled"
-	else
-		rm /etc/nginx/sites-enabled/$1.conf
-		service nginx restart
-		printInfo "$1 was disabled successfully"
-	fi
-	wwwRestart
+    if [ -z "$1" ]
+    then
+        die "Usage: $(basename $0) disable-site [website name]"
+    fi
+    if [ ! -f /etc/nginx/sites-available/$1.conf ]
+    then
+        printWarn "A config for $1 does not exsist. Please use the add-site command"
+    elif [ ! -L /etc/nginx/sites-enabled/$1.conf ]
+    then
+        printWarn "$1 is not enabled"
+    else
+        rm /etc/nginx/sites-enabled/$1.conf
+        service nginx restart
+        printInfo "$1 was disabled successfully"
+    fi
+    wwwRestart
 }
 
 function editSite
 {
-	if [ -z "$1" ]
-	then
-		die "Usage: $(basename $0) edit-site [website name]"
-	elif [ ! -f /etc/nginx/sites-available/$1.conf ]
-	then
-		die "A config for $1 does not exsist. Please use the add-site command"
-	else
-		nano /etc/nginx/sites-available/$1.conf
-	fi
-	wwwRestart
+    if [ -z "$1" ]
+    then
+        die "Usage: $(basename $0) edit-site [website name]"
+    elif [ ! -f /etc/nginx/sites-available/$1.conf ]
+    then
+        die "A config for $1 does not exsist. Please use the add-site command"
+    else
+        nano /etc/nginx/sites-available/$1.conf
+    fi
+    wwwRestart
 }
 
 function editNginxConfig
 {
-	cd /etc/nginx
-	nano /etc/nginx/nginx.conf
-	wwwRestart
+    cd /etc/nginx
+    nano /etc/nginx/nginx.conf
+    wwwRestart
 }
 
 # www-restart
 function wwwRestart
 {
-	service php5-fpm restart
-	service nginx restart
+    service php5-fpm restart
+    service nginx restart
 }
 
 # permissions
 function wwwPermissions
 {
-	if [ -z "$1" ]
-	then
-		chown -R deploy:deploy /sites
-		printInfo "User deploy is now the owner of the www directory"
-	else
-		chown -R $1:$1 /sites
-		printInfo "User $1 is now the owner of the www directory"
-	fi
+    if [ -z "$1" ]
+    then
+        chown -R deploy:deploy /sites
+        printInfo "User deploy is now the owner of the www directory"
+    else
+        chown -R $1:$1 /sites
+        printInfo "User $1 is now the owner of the www directory"
+    fi
 }
 
 ########################################################################
@@ -567,100 +574,100 @@ checkSanity
 case "$1" in
 # main options
 setup)
-	baseSetup
-	;;
+    baseSetup
+    ;;
 ufw)
-	installUfw $2
-	;;
+    installUfw $2
+    ;;
 www)
-	installWWW
-	;;
+    installWWW
+    ;;
 mariadb)
-	installMariadb
-	;;
+    installMariadb
+    ;;
 ruby)
-	installRuby
-	;;
+    installRuby
+    ;;
 # other options/custom commands
 update-bb)
-	updateBasebuntu
-	;;
+    updateBasebuntu
+    ;;
 harden-ssh)
-	hardenSsh $2
-	;;
+    hardenSsh $2
+    ;;
 permissions)
-	wwwPermissions $2
-	;;
+    wwwPermissions $2
+    ;;
 restart)
-	wwwRestart
-	;;
+    wwwRestart
+    ;;
 fail2ban)
-	fail2banInstall
-	;;
+    fail2banInstall
+    ;;
 info)
-	osInfo
-	;;
+    osInfo
+    ;;
 ip)
-	getIp
-	;;
+    getIp
+    ;;
 updater)
-	runUpdater
-	;;
+    runUpdater
+    ;;
 locale)
-	fixLocale
-	;;
+    fixLocale
+    ;;
 test)
-	runTests
-	;;
+    runTests
+    ;;
 add-site)
-	addSite $2
-	;;
+    addSite $2
+    ;;
 remove-site)
-	removeSite $2
-	;;
+    removeSite $2
+    ;;
 enable-site)
-	enableSite $2
-	;;
+    enableSite $2
+    ;;
 disable-site)
-	disableSite $2
-	;;
+    disableSite $2
+    ;;
 edit-site)
-	editSite $2
-	;;
+    editSite $2
+    ;;
 nginx-config)
-	editNginxConfig
-	;;
+    editNginxConfig
+    ;;
 *)
-	osInfo
-	echo '  '
-	echo 'Usage:' $(basename $0) '[option] [argument]'
-	echo '  '
-	echo 'Main options (in recomended order):'
-	echo '  - setup                   (Remove unneeded, upgrade system, install software)'
-	echo '  - ufw [ssh port]          (Setup basic firewall with HTTP(S) and SSH open)'
-	echo '  - www                     (Install Ngnix, PHP, and Pagespeed)'
-	echo '  - mariadb                 (Install MySQL alternative and set root password)'
-	echo '  - ruby                    (Install Ruby with RVM)'
-	echo '  '
-	echo 'Extra options and custom commands:'
-	echo '  - harden-ssh [option #]   (Hardens openSSH with PermitRoot and PasswordAuthentication)'
-	echo '  - fail2ban                (Installs fail2ban and creates a config file)'
-	echo '  - info                    (Displays information about the OS, ARCH and VERSION)'
-	echo '  - ip                      (Displays the external IP address of the server)'
-	echo '  - updater                 (Updates/upgrades packages, no release upgrades)'
-	echo '  - update-bb               (Updates basebuntu and keeps current config file)'
-	echo '  - locale                  (Fix locales issue with OpenVZ Ubuntu templates)'
-	echo '  - test                    (Run the classic disk IO and classic cachefly network test)'
-	echo '  '
-	echo 'Nginx website commands:'
-	echo '  - restart                 (Restarts Ngnix and PHP-FPM)'
-	echo '  - permissions             (Make sure the proper permissions are set for /var/www/)'
-	echo '  - add-site [website]      (Creates folder structure and empty config)'
-	echo '  - remove-site [website]   (Deletes folder structure and config)'
-	echo '  - enable-site [website]   (Creates symlink to sites-enabled)'
-	echo '  - disable-site [website]  (Deletes symlink to sites-enabled)'
-	echo '  - edit-site [website]     (Opens website config in nano)'
-	echo '  - nginx-config            (Opens Nginx config in nano)'
-	echo '  '
-	;;
+    osInfo
+    echo '  '
+    echo 'Usage:' $(basename $0) '[option] [argument]'
+    echo '  '
+    echo 'Main options (in recomended order):'
+    echo '  - setup                   (Remove unneeded, upgrade system, install software)'
+    echo '  - ufw [ssh port]          (Setup basic firewall with HTTP(S) and SSH open)'
+    echo '  - www                     (Install Ngnix, PHP, and Pagespeed)'
+    echo '  - mariadb                 (Install MySQL alternative and set root password)'
+    echo '  - ruby                    (Install Ruby with RVM)'
+    echo '  '
+    echo 'Extra options and custom commands:'
+    echo '  - harden-ssh [option #]   (Hardens openSSH with PermitRoot and PasswordAuthentication)'
+    echo '  - fail2ban                (Installs fail2ban and creates a config file)'
+    echo '  - info                    (Displays information about the OS, ARCH and VERSION)'
+    echo '  - ip                      (Displays the external IP address of the server)'
+    echo '  - updater                 (Updates/upgrades packages, no release upgrades)'
+    echo '  - update-bb               (Updates basebuntu and keeps current config file)'
+    echo '  - locale                  (Fix locales issue with OpenVZ Ubuntu templates)'
+    echo '  - test                    (Run the classic disk IO and classic cachefly network test)'
+    echo '  '
+    echo 'Nginx website commands:'
+    echo '  - restart                 (Restarts Ngnix and PHP-FPM)'
+    echo '  - permissions             (Make sure the proper permissions are set for /var/www/)'
+    echo '  - add-site [website]      (Creates folder structure and empty config)'
+    echo '  - remove-site [website]   (Deletes folder structure and config)'
+    echo '  - enable-site [website]   (Creates symlink to sites-enabled)'
+    echo '  - disable-site [website]  (Deletes symlink to sites-enabled)'
+    echo '  - edit-site [website]     (Opens website config in nano)'
+    echo '  - nginx-config            (Opens Nginx config in nano)'
+    echo '  '
+    ;;
 esac

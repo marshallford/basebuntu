@@ -24,18 +24,18 @@ Remove excess packages and install the basic components needed for a light-weigh
 
 Warning! This script will overwrite previous configs during re-installation. While I have included some checks to prevent overwriting, be aware that things may break if you run a main option command more than once on a box.
 
-	apt-get update; apt-get install git -y; git clone https://github.com/marshallford/basebuntu
-	cd ~/basebuntu; chmod +x basebuntu.sh
+    apt-get update; apt-get install git -y; git clone https://github.com/marshallford/basebuntu
+    cd ~/basebuntu; chmod +x basebuntu.sh
 
 ## Main options
 
 **Note: You must run setup before any other command. Setup installs/configures a base install.**
 
-	./basebuntu.sh setup
-	./basebuntu.sh ufw [ssh port]
-	./basebuntu.sh www
-	./basebuntu.sh mariadb
-	./baasebuntu.sh ruby
+    ./basebuntu.sh setup
+    ./basebuntu.sh ufw [ssh port]
+    ./basebuntu.sh www
+    ./basebuntu.sh mariadb
+    ./baasebuntu.sh ruby
 
 ## Extra options and other commands
 
@@ -43,7 +43,7 @@ Warning! This script will overwrite previous configs during re-installation. Whi
 
 Hardens openSSH with PermitRoot and PasswordAuthentication
 
-	./basebuntu.sh harden-ssh [option #]
+    ./basebuntu.sh harden-ssh [option #]
 
 1. All users including root can only login via SSH-keys.
 
@@ -57,39 +57,39 @@ Hardens openSSH with PermitRoot and PasswordAuthentication
 
 Installs a firewall to protect against bruteforce attacks on ssh and http(s) ports.
 
-	./basebuntu.sh fail2ban
+    ./basebuntu.sh fail2ban
 
 ##### Info on Operating System, version and Architecture
 
-	./basebuntu.sh info
+    ./basebuntu.sh info
 
 ##### External IP
 
 To get the server's external IP address.
 
-	./basebuntu.sh ip
+    ./basebuntu.sh ip
 
 ##### Updater
 
 Runs a full update and upgrade of packages and then cleans up. This command will not upgrade to a newer release cycles. Ex: 12.04 LTS > 12.10.
 
-	./basebuntu.sh updater
+    ./basebuntu.sh updater
 
 ##### basebuntu Updater
 
 Updates basebuntu script and keeps current config file.
 
-	./basebuntu.sh update-bb
+    ./basebuntu.sh update-bb
 
 ##### Fixing locale on some OpenVZ Ubuntu templates
 
-	./basebuntu.sh locale
+    ./basebuntu.sh locale
 
 ##### Classic Disk I/O and Network test
 
 Run the classic Disk IO (dd) & Classic Network (cachefly) Test
 
-	./basebuntu.sh test
+    ./basebuntu.sh test
 
 ## Nginx commands
 
@@ -97,53 +97,53 @@ Run the classic Disk IO (dd) & Classic Network (cachefly) Test
 
 Restarts PHP-FPM and Nginx
 
-	./basebuntu.sh restart
+    ./basebuntu.sh restart
 
 ##### Permissions
 
 Sets the proper permissions for `/sites`. This sets the owner and group to the user `deploy`. This allows the deployment user to push websites to the server.
 
-	./basebuntu.sh permissions
+    ./basebuntu.sh permissions
 
 To set the owner and group of `/sites` to someone other than `deploy` use the permissions command followed by the name of the user.
 
-	./basebuntu.sh www-permissions user_name_here
+    ./basebuntu.sh www-permissions user_name_here
 
 ##### Add Website
 
 Create folder structure and empty site config for a new website.
 
-	./basebuntu.sh add-site [website name]
+    ./basebuntu.sh add-site [website name]
 
 ##### Remove Website
 
 Deletes website config and files.
 
-	./basebuntu.sh remove-site [website name]
+    ./basebuntu.sh remove-site [website name]
 
 ##### Enable Website
 
 Enables/activates website.
 
-	./basebuntu.sh enable-site [website name]
+    ./basebuntu.sh enable-site [website name]
 
 ##### Disable Website
 
 Disables/Deactivates website.
 
-	./basebuntu.sh disable-site [website name]
+    ./basebuntu.sh disable-site [website name]
 
 ##### Edit Website
 
 Opens website config in nano.
 
-	./basebuntu.sh edit-site [website name]
+    ./basebuntu.sh edit-site [website name]
 
 ##### Edit Nginx Config
 
 Opens Nginx config in nano.
 
-	./basebuntu.sh nginx-config
+    ./basebuntu.sh nginx-config
 
 ## After installation
 
