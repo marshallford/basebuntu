@@ -33,7 +33,7 @@ Warning! This script will overwrite previous configs during re-installation. Whi
 
     ./basebuntu.sh setup
     ./basebuntu.sh ufw [ssh port]
-    ./basebuntu.sh www
+    ./basebuntu.sh nginx
     ./basebuntu.sh mariadb
     ./baasebuntu.sh ruby
 

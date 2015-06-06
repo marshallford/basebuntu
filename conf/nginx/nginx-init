@@ -25,7 +25,7 @@
 # Author:  Jason Giedymin
 #          <jason.giedymin AT gmail.com>.
 #
-# Version: 3.8.0 29-JAN-2015 jason.giedymin AT gmail.com
+# Version: 3.9.0 12-MAY-2015 jason.giedymin AT gmail.com
 # Notes: nginx init.d dash script for Ubuntu.
 # Tested with: Ubuntu 14.10, nginx-1.7.9
 #
@@ -90,7 +90,7 @@ NGINX_CONF_FILE=${NGINX_CONF_FILE:-/etc/nginx/nginx.conf} # config file path
 
 PIDNAME=${PIDNAME:-"nginx"}                   # lets you do $PS-slave
 PIDFILE=${PIDFILE:-$PIDNAME.pid}              # pid file
-PIDSPATH=${PIDSPATH:-/var/run}         # default pid location, you should change it
+PIDSPATH=${PIDSPATH:-/var/run}                # default pid location, you should change it
 RUNAS=${RUNAS:-root}                          # user to run as
 
 SCRIPT_OK=0           # ala error codes
