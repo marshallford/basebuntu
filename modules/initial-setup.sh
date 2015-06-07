@@ -52,9 +52,8 @@ function ppaGit
 
 function scriptAliases
 {
-    echo "alias basebuntu='/root/basebuntu/basebuntu.sh'" >> /root/.bashrc
-    echo "alias bb='/root/basebuntu/basebuntu.sh'" >> /root/.bashrc
-    source /root/.bashrc
+    echo "alias basebuntu='/root/.basebuntu/basebuntu.sh'" >> /root/.bashrc
+    echo "alias bb='/root/.basebuntu/basebuntu.sh'" >> /root/.bashrc
 }
 
 function initialSetup

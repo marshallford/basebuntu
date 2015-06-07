@@ -23,7 +23,7 @@ This script is specifically designed for budget boxes running the latest version
 Warning! This script will overwrite previous configs during re-installation. While I have included some checks to prevent overwriting, be aware that things may break if you run a main option command more than once on a box.
 
     cd ~; apt-get update; apt-get install git -y; git clone https://github.com/marshallford/basebuntu .basebuntu
-    chmod +x ~/.basebuntu/basebuntu.sh; bash ~/.basebuntu/basebuntu.sh setup
+    chmod +x ~/.basebuntu/basebuntu.sh; bash ~/.basebuntu/basebuntu.sh setup; source ~/.bashrc
 
 ## Main options
 
