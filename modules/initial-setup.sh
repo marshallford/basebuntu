@@ -59,8 +59,7 @@ function scriptAliases
 function initialSetup
 {
     scriptLocation
-    cd conf
-    source basebuntu.conf
+    source conf/basebuntu.conf
     if [ "$hasInitalSetupRun" = false ]
     then
         setTimezone
@@ -71,7 +70,7 @@ function initialSetup
         baseInstaller
         runCleaner
         scriptAliases
-        sed -i 's/hasInitalSetupRun.*/hasInitalSetupRun=true/' basebuntu.conf
+        sed -i 's/hasInitalSetupRun.*/hasInitalSetupRun=true/' conf/basebuntu.conf
     else
         printWarn "Inital setup has already been run"
     fi
