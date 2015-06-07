@@ -97,7 +97,7 @@ function scriptLocation
 }
 
 checkSanity
-$SCRIPTLOCATION = `scriptLocation "echo"`
+SCRIPTLOCATION=`scriptLocation "echo"`
 scriptLocation
 
 ########################################################################

@@ -23,8 +23,8 @@ function installNginx
 
     # Nginx & Pagespeed from source
     scriptLocation
-    mkdir -p tmp
-    cd tmp
+    mkdir -p temp
+    cd temp
     installer nginx-dependencies build-essential zlib1g-dev libpcre3 libpcre3-dev libssl-dev
     wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${PAGESPEED}-beta.zip
     unzip release-${PAGESPEED}-beta.zip
@@ -32,11 +32,11 @@ function installNginx
     wget https://dl.google.com/dl/page-speed/psol/${PAGESPEED}.tar.gz
     tar -xzvf ${PAGESPEED}.tar.gz  # extracts to psol/
     scriptLocation
-    cd tmp
+    cd temp
     wget http://nginx.org/download/nginx-$NGINX.tar.gz # download nginx
     tar -xvzf nginx-$NGINX.tar.gz # uncompress nginx
     cd nginx-$NGINX/
-    ./configure --sbin-path=/usr/local/sbin --conf-path=/etc/nginx/nginx.conf --user=$WWWUSER --group=$WWWUSER --lock-path=/var/lock/nginx.lock --pid-path=/var/run/nginx.pid --add-module=$HOME/ngx_pagespeed-release-$PAGESPEED-beta --with-http_spdy_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module
+    ./configure --sbin-path=/usr/local/sbin --conf-path=/etc/nginx/nginx.conf --user=$WWWUSER --group=$WWWUSER --lock-path=/var/lock/nginx.lock --pid-path=/var/run/nginx.pid --add-module=$SCRIPTLOCATION/temp/ngx_pagespeed-release-$PAGESPEED-beta --with-http_spdy_module --with-http_ssl_module --with-http_gzip_static_module --with-http_realip_module
     make
     make install
     # H5BP
@@ -82,8 +82,9 @@ function installNginx
     chown -R $WWWUSER:$WWWUSER /etc/nginx/sites-enabled
     chown -R $WWWUSER:$WWWUSER /sites
     wwwPermissions
+
     # clean up
-    rm -rf $SCRIPTLOCATION/tmp
+    rm -rf $SCRIPTLOCATION/temp
     # finishing touches
     rm -rf /usr/share/nginx/html # remove default website
     wwwRestart
