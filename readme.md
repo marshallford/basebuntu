@@ -6,36 +6,33 @@
 
 This script is specifically designed for budget boxes running the latest version of Ubuntu Server LTS (currently 14.04). This will run great on a Linode 1GB VPS or Digital Ocean 512MB VPS.
 
-## Purpose
+## Features
 
-Remove excess packages and install the basic components needed for a light-weight HTTP(S) web server:
-
+ - Removes excess packages
  - Nginx (web server with https/SPDY support)
+ - Pagespeed (Ngnix module for reducing page load time)
  - PHP-FPM (alternative to mod_php)
  - UFW (firewall)
  - MariaDB (database)
  - Ruby environment using RVM
- - Pagespeed (Ngnix module for reducing page load time)
  - Commands for easy administration
  - Custom Nginx commands for working with website configs
- - And more!
 
 ## Install
 
 Warning! This script will overwrite previous configs during re-installation. While I have included some checks to prevent overwriting, be aware that things may break if you run a main option command more than once on a box.
 
-    apt-get update; apt-get install git -y; git clone https://github.com/marshallford/basebuntu
-    cd ~/basebuntu; chmod +x basebuntu.sh
+    cd ~; apt-get update; apt-get install git -y; git clone https://github.com/marshallford/basebuntu .basebuntu
+    chmod +x ~/.basebuntu/basebuntu.sh; bash ~/.basebuntu/basebuntu.sh setup
 
 ## Main options
 
 **Note: You must run setup before any other command. Setup installs/configures a base install.**
 
-    ./basebuntu.sh setup
-    ./basebuntu.sh ufw [ssh port]
-    ./basebuntu.sh nginx
-    ./basebuntu.sh mariadb
-    ./baasebuntu.sh ruby
+    bb ufw [ssh port]
+    bb nginx
+    bb mariadb
+    bb ruby
 
 ## Extra options and other commands
 
@@ -43,7 +40,7 @@ Warning! This script will overwrite previous configs during re-installation. Whi
 
 Hardens openSSH with PermitRoot and PasswordAuthentication
 
-    ./basebuntu.sh harden-ssh [option #]
+    bb harden-ssh [option #]
 
 1. All users including root can only login via SSH-keys.
 
@@ -57,39 +54,39 @@ Hardens openSSH with PermitRoot and PasswordAuthentication
 
 Installs a firewall to protect against bruteforce attacks on ssh and http(s) ports.
 
-    ./basebuntu.sh fail2ban
+    bb fail2ban
 
 ##### Info on Operating System, version and Architecture
 
-    ./basebuntu.sh info
+    bb info
 
 ##### External IP
 
 To get the server's external IP address.
 
-    ./basebuntu.sh ip
+    bb ip
 
 ##### Updater
 
 Runs a full update and upgrade of packages and then cleans up. This command will not upgrade to a newer release cycles. Ex: 12.04 LTS > 12.10.
 
-    ./basebuntu.sh updater
+    bb updater
 
 ##### basebuntu Updater
 
 Updates basebuntu script and keeps current config file.
 
-    ./basebuntu.sh update-bb
+    bb update-bb
 
 ##### Fixing locale on some OpenVZ Ubuntu templates
 
-    ./basebuntu.sh locale
+    bb locale
 
 ##### Classic Disk I/O and Network test
 
 Run the classic Disk IO (dd) & Classic Network (cachefly) Test
 
-    ./basebuntu.sh test
+    bb test
 
 ## Nginx commands
 
@@ -97,53 +94,53 @@ Run the classic Disk IO (dd) & Classic Network (cachefly) Test
 
 Restarts PHP-FPM and Nginx
 
-    ./basebuntu.sh restart
+    bb restart
 
 ##### Permissions
 
 Sets the proper permissions for `/sites`. This sets the owner and group to the user `deploy`. This allows the deployment user to push websites to the server.
 
-    ./basebuntu.sh permissions
+    bb permissions
 
 To set the owner and group of `/sites` to someone other than `deploy` use the permissions command followed by the name of the user.
 
-    ./basebuntu.sh www-permissions user_name_here
+    bb www-permissions [user name]
 
 ##### Add Website
 
 Create folder structure and empty site config for a new website.
 
-    ./basebuntu.sh add-site [website name]
+    bb add-site [website name]
 
 ##### Remove Website
 
 Deletes website config and files.
 
-    ./basebuntu.sh remove-site [website name]
+    bb remove-site [website name]
 
 ##### Enable Website
 
 Enables/activates website.
 
-    ./basebuntu.sh enable-site [website name]
+    bb enable-site [website name]
 
 ##### Disable Website
 
 Disables/Deactivates website.
 
-    ./basebuntu.sh disable-site [website name]
+    bb disable-site [website name]
 
 ##### Edit Website
 
 Opens website config in nano.
 
-    ./basebuntu.sh edit-site [website name]
+    bb edit-site [website name]
 
 ##### Edit Nginx Config
 
 Opens Nginx config in nano.
 
-    ./basebuntu.sh nginx-config
+    bb nginx-config
 
 ## After installation
 

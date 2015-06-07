@@ -36,7 +36,7 @@ function ppaSupport
 
 function hardenSysctl
 {
-    scriptLocation "cd"
+    scriptLocation
     cd conf
     cat sysctl-append.conf >> /etc/sysctl.conf
     sysctl -p > /dev/null
@@ -54,11 +54,12 @@ function scriptAliases
 {
     echo "alias basebuntu='/root/basebuntu/basebuntu.sh'" >> /root/.bashrc
     echo "alias bb='/root/basebuntu/basebuntu.sh'" >> /root/.bashrc
+    source /root/.bashrc
 }
 
 function initialSetup
 {
-    scriptLocation "cd"
+    scriptLocation
     cd conf
     source basebuntu.conf
     if [ "$hasInitalSetupRun" = false ]

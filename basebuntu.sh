@@ -88,16 +88,17 @@ function checkSanity
 function scriptLocation
 {
     DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-    if [ -z "$1" ] # no argument = echo location
+    if [ "$1" == "echo" ]
     then
         echo $DIR
-    else # argument = move to directory
+    else
         cd $DIR
     fi
 }
 
 checkSanity
-scriptLocation "cd"
+$SCRIPTLOCATION = `scriptLocation "echo"`
+scriptLocation
 
 ########################################################################
 # Load in modules

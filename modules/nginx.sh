@@ -2,8 +2,7 @@
 
 function installNginx
 {
-    $SCRIPTLOCATION = scriptLocation
-    scriptLocation "cd"
+    scriptLocation
     source conf/basebuntu.conf
     if [ "$hasInstallNginxRun" = true ]
     then
@@ -23,7 +22,7 @@ function installNginx
     service php5-fpm restart
 
     # Nginx & Pagespeed from source
-    scriptLocation "cd"
+    scriptLocation
     mkdir -p tmp
     cd tmp
     installer nginx-dependencies build-essential zlib1g-dev libpcre3 libpcre3-dev libssl-dev
@@ -32,7 +31,7 @@ function installNginx
     cd ngx_pagespeed-release-${PAGESPEED}-beta/
     wget https://dl.google.com/dl/page-speed/psol/${PAGESPEED}.tar.gz
     tar -xzvf ${PAGESPEED}.tar.gz  # extracts to psol/
-    scriptLocation "cd"
+    scriptLocation
     cd tmp
     wget http://nginx.org/download/nginx-$NGINX.tar.gz # download nginx
     tar -xvzf nginx-$NGINX.tar.gz # uncompress nginx
@@ -41,7 +40,7 @@ function installNginx
     make
     make install
     # H5BP
-    scriptLocation "cd"
+    scriptLocation
     cd temp
     mkdir -p h5bp
     cd h5bp
@@ -88,6 +87,6 @@ function installNginx
     # finishing touches
     rm -rf /usr/share/nginx/html # remove default website
     wwwRestart
-    scriptLocation "cd"
+    scriptLocation
     sed -i 's/hasInstallWWWRun.*/hasInstallWWWRun=true/' basebuntu.conf
 }

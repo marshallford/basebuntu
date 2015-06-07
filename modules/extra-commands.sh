@@ -23,9 +23,8 @@ function runCleaner
 # basebuntu updater
 function updateBasebuntu
 {
-    $SCRIPTLOCATION = scriptLocation
     cp $SCRIPTLOCATION/conf/basebuntu.conf ~/basebuntu.conf.tmp
-    scriptLocation "cd"
+    scriptLocation
     git reset --hard HEAD
     git pull
     chmod +x basebuntu.sh
