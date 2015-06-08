@@ -3,16 +3,16 @@
 # Standard list of tools commonly used
 function baseInstaller
 {
-    installer text-editors nano vim # text editors
+    installer text-editors "nano vim" # text editors
     installer iftop iftop # show network usage
     installer nload nload # visualize network usage
     installer htop htop # task manager
     installer mc mc # file explorer
-    installer archive-tools unzip zip
+    installer archive-tools "unzip zip"
     installer curl curl # alternative to wget
     installer screen screen
     installer gt5 gt5 # visual disk usage
-    installer nslookup dnsutils # dns tools
+    installer "dns tools" "dnsutils" # dns tools
     ppaGit # version control
 }
 
@@ -20,8 +20,7 @@ function removeUneededPackages
 {
     # Apache
     service apache2 stop
-    apt-get remove apache2* -y
-    apt-get autoremove -y
+    uninstaller apache "apache2*"
 }
 
 function setTimezone
@@ -31,7 +30,7 @@ function setTimezone
 
 function ppaSupport
 {
-    installer ppa-support python-software-properties software-properties-common
+    installer ppa-support "python-software-properties software-properties-common"
 }
 
 function hardenSysctl
@@ -60,7 +59,7 @@ function initialSetup
 {
     scriptLocation
     source conf/basebuntu.conf
-    if [ "$hasInitalSetupRun" = false ]
+    if [ "$hasInitialSetupRun" = false ]
     then
         setTimezone
         removeUneededPackages
@@ -70,8 +69,9 @@ function initialSetup
         baseInstaller
         runCleaner
         scriptAliases
-        sed -i 's/hasInitalSetupRun.*/hasInitalSetupRun=true/' conf/basebuntu.conf
+        scriptLocation
+        sed -i 's/hasInitialSetupRun.*/hasInitialSetupRun=true/' conf/basebuntu.conf
     else
-        printWarn "Inital setup has already been run"
+        printWarn "Initial setup has already been run"
     fi
 }

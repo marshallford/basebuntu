@@ -13,7 +13,7 @@ function installNginx
 
     # PHP-FPM
     # https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-ubuntu-14-04
-    installer php5 php5-fpm php5-mysql php-apc
+    installer php5 "php5-fpm php5-mysql php-apc"
     sed -i "s/user = www-data/user = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
     sed -i "s/group = www-data/group = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
     sed -i "s/listen.owner = www-data/listen.owner = $WWWUSER/" /etc/php5/fpm/pool.d/www.conf
@@ -25,7 +25,7 @@ function installNginx
     scriptLocation
     mkdir -p temp
     cd temp
-    installer nginx-dependencies build-essential zlib1g-dev libpcre3 libpcre3-dev
+    installer nginx-dependencies "build-essential zlib1g-dev libpcre3 libpcre3-dev"
     wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${PAGESPEED}-beta.zip
     unzip release-${PAGESPEED}-beta.zip
     cd ngx_pagespeed-release-${PAGESPEED}-beta/
@@ -70,8 +70,6 @@ function installNginx
     mkdir /var/ngx_pagespeed_cache
     mkdir /var/log/nginx
     mkdir /var/log/pagespeed
-    # mkdir /etc/nginx/sites-available
-    mkdir /etc/nginx/sites-enabled
     mkdir /sites
     # permissions for newly created directories
     chown -R $WWWUSER:$WWWUSER /var/cache/nginx

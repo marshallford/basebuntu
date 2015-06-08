@@ -28,7 +28,6 @@ function installer
 # uninstaller [nick-name] [what to uninstall]
 # example: uninstaller apache2 'apache2*'
 # example: uninstaller web-server 'nginx*'
-# Note: Only allows a single item at a time, unlike installer.
 function uninstaller
 {
     nickName=$1
@@ -37,6 +36,14 @@ function uninstaller
     runCleaner
     printInfo "$nickName uninstalled"
 
+}
+
+# apt-get cleaner
+function runCleaner
+{
+    apt-get -q -y autoremove
+    apt-get -q -y autoclean
+    apt-get -q -y clean
 }
 
 # exits script if something goes wrong

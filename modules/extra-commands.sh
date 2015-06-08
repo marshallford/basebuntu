@@ -1,6 +1,6 @@
 # Extra commands
 
-# updater
+# system updater
 function runUpdater
 {
     for i in 1 2
@@ -11,13 +11,6 @@ function runUpdater
         # clean up
         runCleaner
     done
-}
-
-function runCleaner
-{
-    apt-get -q -y autoremove
-    apt-get -q -y autoclean
-    apt-get -q -y clean
 }
 
 # basebuntu updater
@@ -48,7 +41,7 @@ function runTests
 # locale
 function fixLocale
 {
-    installer multipath-tools multipath-tools
+    installer multipath-tools "multipath-tools"
     export LANGUAGE=en_US.UTF-8
     export LANG=en_US.UTF-8
     export LC_ALL=en_US.UTF-8
@@ -121,7 +114,7 @@ function osInfo
 
 # fail2ban
 function fail2banInstall {
-    installer fail2ban fail2ban
+    installer fail2ban "fail2ban"
     cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
     service fail2ban restart
     printWarn "Fail2ban's config file is located in /etc/fail2ban/jail.local"

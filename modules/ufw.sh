@@ -6,7 +6,7 @@ function installUfw
     then
         die "Usage: $(basename $0) firewall [ssh port]"
     fi
-    installer ufw ufw
+    installer ufw "ufw"
     # Reconfigure sshd - change port
     sed -i 's/^Port [0-9]*/Port '$1'/' /etc/ssh/sshd_config
     service ssh restart

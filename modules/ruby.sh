@@ -9,7 +9,7 @@
 # 5. run to upgrade gems if you wish > rvm all do gem update
 function installRuby {
     scriptLocation
-    installer ruby-dependencies libgdbm-dev libncurses5-dev automake libtool bison libffi-dev
+    installer ruby-dependencies "libgdbm-dev libncurses5-dev automake libtool bison libffi-dev"
     curl -L https://get.rvm.io | bash -s stable
     source ~/.rvm/scripts/rvm
     rvm install $RUBY
